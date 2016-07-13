@@ -2,8 +2,11 @@
 This is a scripts collection for Autodesk Maya application.
 
 Procedure Name : MayaMiscTools
+
 Updata : July 13, 2016
+
 Author : Chris Su
+
 Contact : crystalsu2008@gmail.com
 
 History:
@@ -14,3 +17,9 @@ Description:
 
 How to use:
   Put all scripts in your Maya scripts folder then start Maya. Type and execute "MayaMiscTools" in command line or Script Editor.
+
+Functions:
+  1)batchProcessingFiles()
+    bpf.py
+    This function is used to batch processing Maya scene files with a MEL script.
+  
