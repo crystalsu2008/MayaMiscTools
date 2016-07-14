@@ -1,26 +1,23 @@
 # MayaMiscTools
 This is a scripts collection for Autodesk Maya application.
 
-Procedure Name : MayaMiscTools
+Procedure Name : MayaMiscToolsbr<br>
+Updata : July 13, 2016<br>
+Author : Chris Su<br>
+Contact : crystalsu2008@gmail.com<br>
 
-Updata : July 13, 2016
-
-Author : Chris Su
-
-Contact : crystalsu2008@gmail.com
-
-History:
+History:<br>
   v1.0
 
-Description:
+Description:<br>
   MayaMiscTools is a collection for many Maya Python or MEL scripts. It's witten in Python.
 
-How to use:
-  Put all scripts in your Maya scripts folder then start Maya. Type and execute following commands in Script Editor Python table.
-  >>>import maya_misc_tools
-  >>>maya_misc_tools.openUI()
+How to use:<br>
+  Put all scripts in your Maya scripts folder then start Maya. Type and execute following commands in Script Editor Python table.<br>
+  \>\>\>import maya_misc_tools<br>
+  \>\>\>maya_misc_tools.openUI()<br>
 
-Functions:
-  1)UniqueNameManager()
-    This class is used to find out all dag nodes those have same name, and fix the problem.
+Functions:<br>
+  1)UniqueNameManager()<br>
+    This class is used to find out all dag nodes those have same name, and fix the problem.<br>
   
