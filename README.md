@@ -16,10 +16,11 @@ Description:
   MayaMiscTools is a collection for many Maya Python or MEL scripts. It's witten in Python.
 
 How to use:
-  Put all scripts in your Maya scripts folder then start Maya. Type and execute "MayaMiscTools" in command line or Script Editor.
+  Put all scripts in your Maya scripts folder then start Maya. Type and execute following commands in Script Editor Python table.
+  >>>import maya_misc_tools
+  >>>maya_misc_tools.openUI()
 
 Functions:
-  1)batchProcessingFiles()
-    bpf.py
-    This function is used to batch processing Maya scene files with a MEL script.
+  1)UniqueNameManager()
+    This class is used to find out all dag nodes those have same name, and fix the problem.
   
