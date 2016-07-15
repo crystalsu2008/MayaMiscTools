@@ -1,9 +1,11 @@
+# Batch Processing Fiels
+# Not done yet!!!
 from pymel.core import *
 
-class batchProcessingFiles():
-
+class BatchProcessingFiles(object):
+    'Batch processing files class'
     files=[]
-    lable='Batch Processing Fiels' #The table's lable that embeded in MayaGadgets Layout 
+    lable='Batch Processing Fiels' #This lable is used to embed in MayaMiscTools's Layout.
 
     def initUI(self, parentLayout=None):
         if parentLayout:
@@ -29,7 +31,7 @@ class batchProcessingFiles():
         self.addFilesButton.setCommand(self.addFiles)
         self.removeFilesButton.setCommand(self.removeFiles)
         self.processingButton.setCommand(self.processing)
-        self.embed=self.frame #Use to embed in MayaGadgets Layout
+        self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
     def openUI(self):
         if window('batchProcessingFielsWin', q=True, ex=True):
