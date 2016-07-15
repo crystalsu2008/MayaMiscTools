@@ -10,10 +10,9 @@ __Contact__ : crystalsu2008@gmail.com<br>
 * v0.0
 
 ##How to use:
-Put all scripts in your Maya scripts folder then start Maya. Type and execute following commands in Script Editor Python table.<br>
-
-    >>>import maya_misc_tools
-    >>>maya_misc_tools.openUI()
+Put all scripts in a folder. It's recommended to place this folder in your Maya scripts folder, but it can be anywhere.<br>
+Once you have the MayaMiscTools folder where you want it to be, then just drag and drop the "install.mel" file into Maya (drop in any viewport).<br>
+This will open MayaMiscTools's UI.<br>
 
 ##Functions:
 * UniqueNameManager()<br>
