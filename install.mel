@@ -13,5 +13,16 @@ return $scriptLocation;
 }
 
 string $addpath = `asInstallScriptLocation`;
+python ("import sys");
 python ("sys.path.append(\""+$addpath+"\")");
 python "import maya_misc_tools as mmt;mmt.openUI()";
+
+
+/*import sys;
+ if not "/home/a/" in sys.path:
+     sys.path.append("/home/a/")
+ if not 'b' in sys.modules:
+     b = __import__('b')
+ else:
+     eval('import b')
+     b = eval('reload(b)')*/
