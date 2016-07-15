@@ -1,5 +1,5 @@
 # MayaMiscTools
-MayaMiscTools is a collection for many Maya Python or MEL scripts. It's witten in Python.
+    MayaMiscTools is a collection for many Maya Python or MEL scripts. It's witten in Python.
 
 __Procedure Name__ : MayaMiscToolsbr<br>
 __Updata__ : July 13, 2016<br>
@@ -7,7 +7,7 @@ __Author__ : Chris Su<br>
 __Contact__ : crystalsu2008@gmail.com<br>
 
 ##History:
-* v1.0
+* v0.0
 
 ##How to use:
 Put all scripts in your Maya scripts folder then start Maya. Type and execute following commands in Script Editor Python table.<br>
