@@ -1,13 +1,13 @@
 # MayaMiscTools
-This is a scripts collection for Autodesk Maya application.
+    This is a scripts collection for Autodesk Maya application.
 
-Procedure Name : MayaMiscToolsbr<br>
-Updata : July 13, 2016<br>
-Author : Chris Su<br>
-Contact : crystalsu2008@gmail.com<br>
+    Procedure Name : MayaMiscToolsbr
+    Updata : July 13, 2016
+    Author : Chris Su
+    Contact : crystalsu2008@gmail.com
 
-History:<br>
-<blockquote>v1.0</blockquote>
+###History:<br>
+* v1.0
 
 Description:<br>
 <blockquote>MayaMiscTools is a collection for many Maya Python or MEL scripts. It's witten in Python.</blockquote>
