@@ -1,25 +1,49 @@
-global proc asInstallScriptLocator (){}
+string $MMTpath = `MMTGetInstallPath`;
+//python ("import sys");
+//python ("sys.path.append(\""+$MMTpath+"\")");
+//python "import maya_misc_tools as mmt;mmt.openUI()";
 
-global proc string asInstallScriptLocation ()
+global string $gShelfTopLevel;
+string $currentShelf = `tabLayout -query -selectTab $gShelfTopLevel`;
+setParent $currentShelf;
+
+shelfButton
+  -command ("import sys\n"+
+            "if not \""+$MMTpath+"\" in sys.path:\n"+
+            " sys.path.append(\""+$MMTpath+"\")\n"+
+            "if not 'maya_misc_tools' in sys.modules:\n"+
+            " mmt=__import__('maya_misc_tools')\n"+
+            "else:\n"+
+            " reload(mmt)\n"+
+            "mmt.openUI()")
+	-annotation "Maya Misc Tools"
+	-label "Maya Misc Tools"
+  -image ("commandButton.png")
+  -image1 ("commandButton.png")
+  -imageOverlayLabel "MMT"
+	-sourceType "python"
+;
+
+global proc MMTInstallPathProbe (){}
+
+global proc string MMTGetInstallPath ()
 {
-string $whatIs=`whatIs asInstallScriptLocator`;
-string $fullPath=`substring $whatIs 25 999`;
-string $buffer[];
-int $numTok=`tokenize $fullPath "/" $buffer`;
-int $numLetters=size($fullPath);
-int $numLettersLastFolder=size($buffer[$numTok-1]);
-string $scriptLocation=`substring $fullPath 1 ($numLetters-$numLettersLastFolder)`;
-return $scriptLocation;
+  string $whatIs=`whatIs MMTInstallPathProbe`;
+  string $fullPath=`substring $whatIs 25 999`;
+  string $buffer[];
+  int $numTok=`tokenize $fullPath "/" $buffer`;
+  int $numLetters=size($fullPath);
+  int $numLettersLastFolder=size($buffer[$numTok-1]);
+  string $scriptLocation=`substring $fullPath 1 ($numLetters-$numLettersLastFolder)`;
+  return $scriptLocation;
 }
 
-string $addpath = `asInstallScriptLocation`;
-python ("import sys");
-python ("sys.path.append(\""+$addpath+"\")");
-python "import maya_misc_tools as mmt;mmt.openUI()";
+
+
 
 
 /*import sys;
- if not "/home/a/" in sys.path:
+ if not "/home/a/"
      sys.path.append("/home/a/")
  if not 'b' in sys.modules:
      b = __import__('b')
