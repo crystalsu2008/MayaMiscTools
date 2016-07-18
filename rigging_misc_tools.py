@@ -15,15 +15,21 @@ class RiggingMiscTools(object):
         with frameLayout(bv=True,lv=False,label=self.lable) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 with columnLayout(cat=('both', 0), rs=0, adj=True) as self.clumn:
-                    self.jointSizeSlider=floatSliderGrp(cw=[1,60], label='Joint Size', field=True, minValue=0.01, maxValue=10.0, fieldMinValue=0.01, fieldMaxValue=100.0, precision=2, value=1)
-                    with gridLayout(  cellWidthHeight=(30, 30),columnsResizable=True) as self.sizeButtongrid:
-                        button(l='0.01', h=30, command='jointDisplayScale(0.01)')
-                        button(l='0.25', h=30, command='jointDisplayScale(0.25)')
-                        button(l='0.5', h=30, command='jointDisplayScale(0.5)')
-                        button(l='0.75', h=30, command='jointDisplayScale(0.75)')
-                        button(l='1', h=30, command='jointDisplayScale(1)')
-                        for i in range(2,11):
-                            button(l=(i), h=30, command=('jointDisplayScale('+str(i)+')'))
+
+                    with frameLayout(bv=True,lv=True,label='Joint Size',cll=True) as self.jointSizeFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointSizeClumn:
+                            self.jointSizeSlider=floatSliderGrp(cw=[1,60], label='Joint Size', field=True, minValue=0.01, maxValue=10.0, fieldMinValue=0.01, fieldMaxValue=100.0, precision=2, value=1)
+                            self.jointSizeSlider.changeCommand(self.setJointSize)
+                            self.jointSizeSlider.dragCommand(self.setJointSize)
+                            with gridLayout(  cellWidthHeight=(30, 30),columnsResizable=True) as self.sizeButtongrid:
+                                button(l='0.01', h=30, command='jointDisplayScale(0.01)')
+                                button(l='0.25', h=30, command='jointDisplayScale(0.25)')
+                                button(l='0.5', h=30, command='jointDisplayScale(0.5)')
+                                button(l='0.75', h=30, command='jointDisplayScale(0.75)')
+                                button(l='1', h=30, command='jointDisplayScale(1)')
+                                for i in range(2,11):
+                                    button(l=(i), h=30, command=('jointDisplayScale('+str(i)+')'))
+
                     with formLayout(numberOfDivisions=100) as self.showJointLableForm:
                         self.showJointLableButton=button(l='Show Joint\'s Lable', h=30)
                         SJLB=self.showJointLableButton
@@ -45,8 +51,7 @@ class RiggingMiscTools(object):
                     formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
                     self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
-        self.jointSizeSlider.changeCommand(self.setJointSize)
-        self.jointSizeSlider.dragCommand(self.setJointSize)
+
         self.showJointLableButton.setCommand(self.jointsLableVisible)
         self.hideJointLableButton.setCommand(self.jointsLableInvisible)
         self.showJointAxisButton.setCommand(self.jointsAxisVisible)
