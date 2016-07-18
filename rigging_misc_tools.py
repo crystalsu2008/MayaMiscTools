@@ -36,6 +36,13 @@ class RiggingMiscTools(object):
                         self.hideJointAxisButton=button(l='Hide Joint\'s Local Rotation Axes', h=30)
                         HJAB=self.hideJointAxisButton
                     formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
+                    self.lockAndHideCheck=checkBoxGrp(cw=[1,60], numberOfCheckBoxes=3, label='Attributes', labelArray3=['Translate', 'Rotate', 'Scale'])
+                    with formLayout(numberOfDivisions=100) as self.lockAndHideForm:
+                        self.unlockAndShowButton=button(l='Unlick and Show Joint\'s Transform Attributes', h=30)
+                        USB=self.unlockAndShowButton
+                        self.lockAndHideButton=button(l='Lock and Hide Joint\'s Transform Attributes', h=30)
+                        LHB=self.lockAndHideButton
+                    formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.jointSizeSlider.changeCommand(self.setJointSize)
         self.jointSizeSlider.dragCommand(self.setJointSize)
@@ -43,7 +50,55 @@ class RiggingMiscTools(object):
         self.hideJointLableButton.setCommand(self.jointsLableInvisible)
         self.showJointAxisButton.setCommand(self.jointsAxisVisible)
         self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
+        self.unlockAndShowButton.setCommand(self.unlockAndShowJointsAttr)
+        self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
+
+    #Set joint's Transform Attributes Locked and Invisible
+    def lockAndHideJointsAttr(self, val):
+        seljoints=ls(sl=True, typ='joint')
+        joints=seljoints
+        if(len(seljoints)):
+            for x in seljoints:
+                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
+        else:
+            joints=ls(typ='joint')
+        for x in joints:
+            if self.lockAndHideCheck.getValue1():
+                setAttr((x+'.tx'), lock=True, keyable=False)
+                setAttr((x+'.ty'), lock=True, keyable=False)
+                setAttr((x+'.tz'), lock=True, keyable=False)
+            if self.lockAndHideCheck.getValue2():
+                setAttr((x+'.rx'), lock=True, keyable=False)
+                setAttr((x+'.ry'), lock=True, keyable=False)
+                setAttr((x+'.rz'), lock=True, keyable=False)
+            if self.lockAndHideCheck.getValue3():
+                setAttr((x+'.sx'), lock=True, keyable=False)
+                setAttr((x+'.sy'), lock=True, keyable=False)
+                setAttr((x+'.sz'), lock=True, keyable=False)
+
+    #Set joint's Transform Attributes Unlocked and Visible
+    def unlockAndShowJointsAttr(self, val):
+        seljoints=ls(sl=True, typ='joint')
+        joints=seljoints
+        if(len(seljoints)):
+            for x in seljoints:
+                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
+        else:
+            joints=ls(typ='joint')
+        for x in joints:
+            if self.lockAndHideCheck.getValue1():
+                setAttr((x+'.tx'), lock=False, keyable=True)
+                setAttr((x+'.ty'), lock=False, keyable=True)
+                setAttr((x+'.tz'), lock=False, keyable=True)
+            if self.lockAndHideCheck.getValue2():
+                setAttr((x+'.rx'), lock=False, keyable=True)
+                setAttr((x+'.ry'), lock=False, keyable=True)
+                setAttr((x+'.rz'), lock=False, keyable=True)
+            if self.lockAndHideCheck.getValue3():
+                setAttr((x+'.sx'), lock=False, keyable=True)
+                setAttr((x+'.sy'), lock=False, keyable=True)
+                setAttr((x+'.sz'), lock=False, keyable=True)
 
     #Set joint's Local Rotation Axes visible
     def jointsAxisInvisible(self, val):
