@@ -43,6 +43,7 @@ class RiggingMiscTools(object):
                         self.lockAndHideButton=button(l='Lock and Hide Joint\'s Transform Attributes', h=30)
                         LHB=self.lockAndHideButton
                     formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
+                    self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.jointSizeSlider.changeCommand(self.setJointSize)
         self.jointSizeSlider.dragCommand(self.setJointSize)
@@ -52,7 +53,19 @@ class RiggingMiscTools(object):
         self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
         self.unlockAndShowButton.setCommand(self.unlockAndShowJointsAttr)
         self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
+        self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
+
+    #Set joint's Local Rotation Axes visible
+    def setJointOrientZero(self, val):
+        seljoints=ls(sl=True, typ='joint')
+        joints=seljoints
+        if(len(seljoints)):
+            for x in seljoints:
+                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
+        else:
+            joints=ls(typ='joint')
+        [setAttr((x+'.jointOrient'), (0,0,0)) for x in joints]
 
     #Set joint's Transform Attributes Locked and Invisible
     def lockAndHideJointsAttr(self, val):
