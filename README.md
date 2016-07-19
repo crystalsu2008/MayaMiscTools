@@ -1,7 +1,6 @@
 # MayaMiscTools
-```
 MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
-```
+
 __Procedure Name__ : MayaMiscToolsbr<br>
 __Update__ : July 19, 2016<br>
 __Author__ : Chris Su<br>
@@ -17,7 +16,7 @@ Put all scripts in a folder. It's recommended to place this folder in your Maya 
 * Unique Name Manager<br>
 This function is used to find out all dag nodes in the scenes those have same name, and fix the problem.<br>
 
-* Batch Processing Files__(It's not done yet!!!)__<br>
+* Batch Processing Files```(It's not done yet!!!)```<br>
 This procedure is used to execute a paragraph of script in the selected files.
 
 * Rigging Misc Tools<br>
