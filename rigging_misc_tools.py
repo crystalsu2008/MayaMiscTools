@@ -70,9 +70,19 @@ class RiggingMiscTools(object):
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
+    def findRootJoint(self, jo):
+        pa=listRelatives(jo, parent=True, typ='joint')
+        return self.findRootJoint(jo=pa[0]) if len(pa) else jo
+
     #Select joints at the root of hierarchy.
     def selectRootJoints(self, val):
-        select( [x for x in self.getJoints() if not len(listRelatives(x, parent=True, typ='joint'))] )
+        seljoints=ls(sl=True, typ='joint')
+        joints=[]
+        if(len(seljoints)):
+            [joints.append(self.findRootJoint(jo=x)) for x in seljoints if not x in joints]
+            select(joints)
+        else:
+            select( [x for x in ls(typ='joint') if not len(listRelatives(x, parent=True, typ='joint'))] )
 
     #Select joints at the end of hierarchy.
     def selectEndJoints(self, val):
@@ -138,9 +148,9 @@ class RiggingMiscTools(object):
     def jointsLableInvisible(self, val):
         [setAttr((x+'.drawLabel'), False) for x in self.getJoints()]
 
-    def getJoints(val, no_selected_return_all=True):
+    def getJoints(self, no_selected_return_all=True):
         seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
+        joints=seljoints[:]
         if(len(seljoints)):
             [joints.append(y) for x in seljoints for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
         elif no_selected_return_all:
