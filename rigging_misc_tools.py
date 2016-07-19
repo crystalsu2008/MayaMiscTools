@@ -60,33 +60,31 @@ class RiggingMiscTools(object):
                                 self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
                                 LHB=self.lockAndHideButton
                             formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
-                            self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
-                            self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
+                    self.selectRootJointsButton=button(l='Select Joints at The Root of Hierarchy', h=30)
+                    self.selectRootJointsButton.setCommand(self.selectRootJoints)
+                    self.selectEndJointsButton=button(l='Select Joints at The End of Hierarchy', h=30)
+                    self.selectEndJointsButton.setCommand(self.selectEndJoints)
+                    self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
+                    self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
 
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
+    #Select joints at the root of hierarchy.
+    def selectRootJoints(self, val):
+        select( [x for x in self.getJoints() if not len(listRelatives(x, parent=True, typ='joint'))] )
+
+    #Select joints at the end of hierarchy.
+    def selectEndJoints(self, val):
+        select( [x for x in self.getJoints() if not len(listRelatives(x, ad=True, typ='joint'))] )
+
     #Set joint's Local Rotation Axes visible
     def setJointOrientZero(self, val):
-        seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
-        if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
-            joints=ls(typ='joint')
-        [setAttr((x+'.jointOrient'), (0,0,0)) for x in joints]
+        [setAttr((x+'.jointOrient'), (0,0,0)) for x in self.getJoints(no_selected_return_all=False)]
 
     #Set joint's Transform Attributes Locked and Invisible
     def lockAndHideJointsAttr(self, val):
-        seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
-        if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
-            joints=ls(typ='joint')
-        for x in joints:
+        for x in self.getJoints():
             if self.lockAndHideCheck.getValue1():
                 setAttr((x+'.tx'), lock=True, keyable=False)
                 setAttr((x+'.ty'), lock=True, keyable=False)
@@ -102,14 +100,7 @@ class RiggingMiscTools(object):
 
     #Set joint's Transform Attributes Unlocked and Visible
     def unlockAndShowJointsAttr(self, val):
-        seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
-        if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
-            joints=ls(typ='joint')
-        for x in joints:
+        for x in self.getJoints():
             if self.lockAndHideCheck.getValue1():
                 setAttr((x+'.tx'), lock=False, keyable=True)
                 setAttr((x+'.ty'), lock=False, keyable=True)
@@ -125,26 +116,11 @@ class RiggingMiscTools(object):
 
     #Set joint's Local Rotation Axes visible
     def jointsAxisInvisible(self, val):
-        seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
-        if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
-            joints=ls(typ='joint')
-        [setAttr((x+'.displayLocalAxis'), False) for x in joints]
+        [setAttr((x+'.displayLocalAxis'), False) for x in self.getJoints()]
 
     #Set joint's Local Rotation Axes visible
     def jointsAxisVisible(self, val):
-        seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
-        if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
-            joints=ls(typ='joint')
-        for x in joints:
-            setAttr((x+'.displayLocalAxis'), True)
+        [setAttr((x+'.displayLocalAxis'), True) for x in self.getJoints()]
 
     def setJointSize(self, val):
         value=self.jointSizeSlider.getValue()
@@ -152,14 +128,7 @@ class RiggingMiscTools(object):
 
     #Set joint's lable visible
     def jointsLableVisible(self, val):
-        seljoints=ls(sl=True, typ='joint')
-        joints=seljoints
-        if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
-            joints=ls(typ='joint')
-        for x in joints:
+        for x in  self.getJoints():
             setAttr((x+'.drawLabel'), True)
             if not getAttr((x+'.type')):
                 setAttr((x+'.type'), 18)
@@ -167,14 +136,16 @@ class RiggingMiscTools(object):
 
     #Set joint's lable invisible
     def jointsLableInvisible(self, val):
+        [setAttr((x+'.drawLabel'), False) for x in self.getJoints()]
+
+    def getJoints(val, no_selected_return_all=True):
         seljoints=ls(sl=True, typ='joint')
         joints=seljoints
         if(len(seljoints)):
-            for x in seljoints:
-                [joints.append(y) for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
-        else:
+            [joints.append(y) for x in seljoints for y in listRelatives(x, ad=True, typ='joint') if not y in joints]
+        elif no_selected_return_all:
             joints=ls(typ='joint')
-        [setAttr((x+'.drawLabel'), False) for x in joints]
+        return joints
 
     def openUI(self):
         if window('riggingMiscTools', q=True, ex=True):
