@@ -1,7 +1,7 @@
 #Rigging misc tools.
 
 from pymel.core import *
-#import maya.cmds as cmds
+import maya.cmds as cmds
 
 class RiggingMiscTools(object):
     'This class include some little function for rigging'
@@ -12,53 +12,58 @@ class RiggingMiscTools(object):
             setParent(parentLayout)
         else:
             self.win=window('riggingMiscTools',t=self.lable,w=400)
-        with frameLayout(bv=True,lv=False,label=self.lable) as self.frame:
+        with frameLayout(bv=False,lv=False,label=self.lable) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 with columnLayout(cat=('both', 0), rs=0, adj=True) as self.clumn:
 
-                    with frameLayout(bv=True,lv=True,label='Joint Size',cll=True) as self.jointSizeFrame:
+                    with frameLayout(bv=True,lv=False,label='Joint Size',cll=True) as self.jointSizeFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointSizeClumn:
                             self.jointSizeSlider=floatSliderGrp(cw=[1,60], label='Joint Size', field=True, minValue=0.01, maxValue=10.0, fieldMinValue=0.01, fieldMaxValue=100.0, precision=2, value=1)
                             self.jointSizeSlider.changeCommand(self.setJointSize)
                             self.jointSizeSlider.dragCommand(self.setJointSize)
                             with gridLayout(  cellWidthHeight=(30, 30),columnsResizable=True) as self.sizeButtongrid:
-                                button(l='0.01', h=30, command='jointDisplayScale(0.01)')
-                                button(l='0.25', h=30, command='jointDisplayScale(0.25)')
-                                button(l='0.5', h=30, command='jointDisplayScale(0.5)')
-                                button(l='0.75', h=30, command='jointDisplayScale(0.75)')
-                                button(l='1', h=30, command='jointDisplayScale(1)')
+                                button(l='0.01', h=30, command='cmds.jointDisplayScale(0.01)')
+                                button(l='0.25', h=30, command='cmds.jointDisplayScale(0.25)')
+                                button(l='0.5', h=30, command='cmds.jointDisplayScale(0.5)')
+                                button(l='0.75', h=30, command='cmds.jointDisplayScale(0.75)')
+                                button(l='1', h=30, command='cmds.jointDisplayScale(1)')
                                 for i in range(2,11):
-                                    button(l=(i), h=30, command=('jointDisplayScale('+str(i)+')'))
+                                    button(l=(i), h=30, command=('cmds.jointDisplayScale('+str(i)+')'))
 
-                    with formLayout(numberOfDivisions=100) as self.showJointLableForm:
-                        self.showJointLableButton=button(l='Show Joint\'s Lable', h=30)
-                        SJLB=self.showJointLableButton
-                        self.hideJointLableButton=button(l='Hide Joint\'s Lable', h=30)
-                        HJLB=self.hideJointLableButton
-                    formLayout(self.showJointLableForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
-                    with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
-                        self.showJointAxisButton=button(l='Show Joint\'s Local Rotation Axes', h=30)
-                        SJAB=self.showJointAxisButton
-                        self.hideJointAxisButton=button(l='Hide Joint\'s Local Rotation Axes', h=30)
-                        HJAB=self.hideJointAxisButton
-                    formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
-                    self.lockAndHideCheck=checkBoxGrp(cw=[1,60], numberOfCheckBoxes=3, label='Attributes', labelArray3=['Translate', 'Rotate', 'Scale'])
-                    with formLayout(numberOfDivisions=100) as self.lockAndHideForm:
-                        self.unlockAndShowButton=button(l='Unlick and Show Joint\'s Transform Attributes', h=30)
-                        USB=self.unlockAndShowButton
-                        self.lockAndHideButton=button(l='Lock and Hide Joint\'s Transform Attributes', h=30)
-                        LHB=self.lockAndHideButton
-                    formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
-                    self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
+                    with frameLayout(bv=True,lv=False,label='Joint Info',cll=True) as self.jointInfoFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointInfoClumn:
+                            with formLayout(numberOfDivisions=100) as self.showJointLableForm:
+                                self.showJointLableButton=button(l='Show Joint\'s Lable', h=30)
+                                self.showJointLableButton.setCommand(self.jointsLableVisible)
+                                SJLB=self.showJointLableButton
+                                self.hideJointLableButton=button(l='Hide Joint\'s Lable', h=30)
+                                self.hideJointLableButton.setCommand(self.jointsLableInvisible)
+                                HJLB=self.hideJointLableButton
+                            formLayout(self.showJointLableForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
+                            with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
+                                self.showJointAxisButton=button(l='Show Joint\'s Local Rotation Axes', h=30)
+                                self.showJointAxisButton.setCommand(self.jointsAxisVisible)
+                                SJAB=self.showJointAxisButton
+                                self.hideJointAxisButton=button(l='Hide Joint\'s Local Rotation Axes', h=30)
+                                self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
+                                HJAB=self.hideJointAxisButton
+                            formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
+
+                    with frameLayout(bv=True,lv=False,label='Joint Lock and Hide',cll=True) as self.jointLockAndHideFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointLockAndHideFrame:
+                            self.lockAndHideCheck=checkBoxGrp(cw=[1,60], numberOfCheckBoxes=3, label='Attributes', labelArray3=['Translate', 'Rotate', 'Scale'])
+                            with formLayout(numberOfDivisions=100) as self.lockAndHideForm:
+                                self.unlockAndShowButton=button(l='Unlick and Show Joint\'s Transform Attributes', h=30)
+                                self.unlockAndShowButton.setCommand(self.unlockAndShowJointsAttr)
+                                USB=self.unlockAndShowButton
+                                self.lockAndHideButton=button(l='Lock and Hide Joint\'s Transform Attributes', h=30)
+                                self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
+                                LHB=self.lockAndHideButton
+                            formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
+                            self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
+                            self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
+
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
-
-        self.showJointLableButton.setCommand(self.jointsLableVisible)
-        self.hideJointLableButton.setCommand(self.jointsLableInvisible)
-        self.showJointAxisButton.setCommand(self.jointsAxisVisible)
-        self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
-        self.unlockAndShowButton.setCommand(self.unlockAndShowJointsAttr)
-        self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
-        self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
     #Set joint's Local Rotation Axes visible

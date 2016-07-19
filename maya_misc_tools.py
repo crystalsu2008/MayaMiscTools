@@ -4,7 +4,7 @@ from pymel.core import *
 import unique_name_manager as unm
 import batch_processing_files as bpf
 
-if not 'unique_name_manager' in sys.modules:
+if not 'rigging_misc_tools' in sys.modules:
    import rigging_misc_tools as rmt
 else:
    reload(rmt)
