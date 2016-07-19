@@ -6,14 +6,14 @@ class UniqueNameManager(object):
     'This class is used to find out all dag nodes those have same name, and fix the problem.'
     multname_objs={}
     list_objs=[]
-    lable = 'Unique Name Manager' #This lable is used to embed in MayaMiscTools's Layout.
+    label = 'Unique Name Manager' #This label is used to embed in MayaMiscTools's Layout.
 
     def initUI(self, parentLayout=None):
         if parentLayout:
             setParent(parentLayout)
         else:
-            self.win=window('uniqueNameManagerWin',t=self.lable,w=400)
-        with frameLayout(bv=True,lv=False,label=self.lable) as self.frame:
+            self.win=window('uniqueNameManagerWin',t=self.label,w=400)
+        with frameLayout(bv=True,lv=False,label=self.label) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 self.analyseButton = button(l='Analyse Scene Multiple Names', h=30)
                 self.listCollection = radioCollection()

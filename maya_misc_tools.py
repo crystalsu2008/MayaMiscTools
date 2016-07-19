@@ -1,15 +1,20 @@
 # This module is a collection that include all tool's module files and organize the UI.
 
 from pymel.core import *
-import unique_name_manager as unm
-import batch_processing_files as bpf
+if not 'unique_name_manager' in sys.modules:
+    import unique_name_manager as unm
+else:
+    reload(unm)
+
+if not 'batch_processing_files' in sys.modules:
+    import batch_processing_files as bpf
+else:
+    reload(bpf)
 
 if not 'rigging_misc_tools' in sys.modules:
    import rigging_misc_tools as rmt
 else:
    reload(rmt)
-
-
 
 def openUI():
     MayaMiscTools().openUI()
@@ -32,7 +37,7 @@ class MayaMiscTools(object):
                 tab3.initUI(self.tabs)
 
         formLayout( self.form, edit=True, attachForm=((self.tabs, 'top', 0), (self.tabs, 'left', 0), (self.tabs, 'bottom', 0), (self.tabs, 'right', 0)) )
-        tabLayout( self.tabs, edit=True, tabLabel=((tab1.embed, tab1.lable), (tab2.embed, tab2.lable), (tab3.embed, tab3.lable)) )
+        tabLayout( self.tabs, edit=True, tabLabel=((tab1.embed, tab1.label), (tab2.embed, tab2.label), (tab3.embed, tab3.label)) )
 
     def openUI(self):
         if window('mayaMiscTools', q=True, ex=True):

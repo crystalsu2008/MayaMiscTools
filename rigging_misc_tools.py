@@ -5,14 +5,14 @@ import maya.cmds as cmds
 
 class RiggingMiscTools(object):
     'This class include some little function for rigging'
-    lable='Rigging Misc Tools' #This lable is used to embed in MayaMiscTools's Layout.
+    label='Rigging Misc Tools' #This label is used to embed in MayaMiscTools's Layout.
 
     def initUI(self, parentLayout=None):
         if parentLayout:
             setParent(parentLayout)
         else:
-            self.win=window('riggingMiscTools',t=self.lable,w=400)
-        with frameLayout(bv=False,lv=False,label=self.lable) as self.frame:
+            self.win=window('riggingMiscTools',t=self.label,w=400)
+        with frameLayout(bv=False,lv=False,label=self.label) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 with columnLayout(cat=('both', 0), rs=0, adj=True) as self.clumn:
 
@@ -32,14 +32,14 @@ class RiggingMiscTools(object):
 
                     with frameLayout(bv=True,lv=False,label='Joint Info',cll=True) as self.jointInfoFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointInfoClumn:
-                            with formLayout(numberOfDivisions=100) as self.showJointLableForm:
-                                self.showJointLableButton=button(l='Show Joint\'s Lable', h=30)
-                                self.showJointLableButton.setCommand(self.jointsLableVisible)
-                                SJLB=self.showJointLableButton
-                                self.hideJointLableButton=button(l='Hide Joint\'s Lable', h=30)
-                                self.hideJointLableButton.setCommand(self.jointsLableInvisible)
-                                HJLB=self.hideJointLableButton
-                            formLayout(self.showJointLableForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
+                            with formLayout(numberOfDivisions=100) as self.showJointlabelForm:
+                                self.showJointlabelButton=button(l='Show Joint\'s label', h=30)
+                                self.showJointlabelButton.setCommand(self.jointsLabelVisible)
+                                SJLB=self.showJointlabelButton
+                                self.hideJointlabelButton=button(l='Hide Joint\'s label', h=30)
+                                self.hideJointlabelButton.setCommand(self.jointslabelInvisible)
+                                HJLB=self.hideJointlabelButton
+                            formLayout(self.showJointlabelForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
                             with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
                                 self.showJointAxisButton=button(l='Show Joint\'s Local Rotation Axes', h=30)
                                 self.showJointAxisButton.setCommand(self.jointsAxisVisible)
@@ -88,11 +88,11 @@ class RiggingMiscTools(object):
     def selectEndJoints(self, val):
         select( [x for x in self.getJoints() if not len(listRelatives(x, ad=True, typ='joint'))] )
 
-    #Set joint's Local Rotation Axes visible
+    #Set joint orient attribute to zero.
     def setJointOrientZero(self, val):
         [setAttr((x+'.jointOrient'), (0,0,0)) for x in self.getJoints(no_selected_return_all=False)]
 
-    #Set joint's Transform Attributes Locked and Invisible
+    #Set joint's Transform Attributes Locked and Invisible.
     def lockAndHideJointsAttr(self, val):
         for x in self.getJoints():
             if self.lockAndHideCheck.getValue1():
@@ -108,7 +108,7 @@ class RiggingMiscTools(object):
                 setAttr((x+'.sy'), lock=True, keyable=False)
                 setAttr((x+'.sz'), lock=True, keyable=False)
 
-    #Set joint's Transform Attributes Unlocked and Visible
+    #Set joint's Transform Attributes Unlocked and Visible.
     def unlockAndShowJointsAttr(self, val):
         for x in self.getJoints():
             if self.lockAndHideCheck.getValue1():
@@ -124,11 +124,11 @@ class RiggingMiscTools(object):
                 setAttr((x+'.sy'), lock=False, keyable=True)
                 setAttr((x+'.sz'), lock=False, keyable=True)
 
-    #Set joint's Local Rotation Axes visible
+    #Set joint's Local Rotation Axes visible.
     def jointsAxisInvisible(self, val):
         [setAttr((x+'.displayLocalAxis'), False) for x in self.getJoints()]
 
-    #Set joint's Local Rotation Axes visible
+    #Set joint's Local Rotation Axes visible.
     def jointsAxisVisible(self, val):
         [setAttr((x+'.displayLocalAxis'), True) for x in self.getJoints()]
 
@@ -136,16 +136,16 @@ class RiggingMiscTools(object):
         value=self.jointSizeSlider.getValue()
         jointDisplayScale(value)
 
-    #Set joint's lable visible
-    def jointsLableVisible(self, val):
+    #Set joint's label visible.
+    def jointsLabelVisible(self, val):
         for x in  self.getJoints():
             setAttr((x+'.drawLabel'), True)
             if not getAttr((x+'.type')):
                 setAttr((x+'.type'), 18)
                 setAttr((x+'.otherType'), x.nodeName(), type='string')
 
-    #Set joint's lable invisible
-    def jointsLableInvisible(self, val):
+    #Set joint's label invisible.
+    def jointslabelInvisible(self, val):
         [setAttr((x+'.drawLabel'), False) for x in self.getJoints()]
 
     def getJoints(self, no_selected_return_all=True):

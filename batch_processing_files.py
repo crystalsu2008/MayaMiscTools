@@ -5,14 +5,14 @@ from pymel.core import *
 class BatchProcessingFiles(object):
     'Batch processing files class'
     files=[]
-    lable='Batch Processing Fiels' #This lable is used to embed in MayaMiscTools's Layout.
+    label='Batch Processing Fiels' #This label is used to embed in MayaMiscTools's Layout.
 
     def initUI(self, parentLayout=None):
         if parentLayout:
             setParent(parentLayout)
         else:
-            self.win=window('batchProcessingFielsWin',t=self.lable,w=400)
-        with frameLayout(bv=True,lv=False,label=self.lable) as self.frame:
+            self.win=window('batchProcessingFielsWin',t=self.label,w=400)
+        with frameLayout(bv=True,lv=False,label=self.label) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 with paneLayout(configuration='horizontal2') as self.pane:
                     with frameLayout(bv=True,lv=True,label='Files List') as self.fileListFrame:
