@@ -12,7 +12,7 @@ class BatchProcessingFiles(object):
             setParent(parentLayout)
         else:
             self.win=window('batchProcessingFielsWin',t=self.label,w=400)
-        with frameLayout(bv=True,lv=False,label=self.label) as self.frame:
+        with frameLayout(bv=False,lv=False,label=self.label) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 with paneLayout(configuration='horizontal2') as self.pane:
                     with frameLayout(bv=True,lv=True,label='Files List') as self.fileListFrame:

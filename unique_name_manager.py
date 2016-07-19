@@ -13,7 +13,7 @@ class UniqueNameManager(object):
             setParent(parentLayout)
         else:
             self.win=window('uniqueNameManagerWin',t=self.label,w=400)
-        with frameLayout(bv=True,lv=False,label=self.label) as self.frame:
+        with frameLayout(bv=False,lv=False,label=self.label) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 self.analyseButton = button(l='Analyse Scene Multiple Names', h=30)
                 self.listCollection = radioCollection()
