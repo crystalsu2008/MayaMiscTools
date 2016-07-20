@@ -1,4 +1,4 @@
-# Batch Processing Fiels
+# This procedure is used to execute a paragraph of script in the selected files.
 # Not done yet!!!
 from pymel.core import *
 

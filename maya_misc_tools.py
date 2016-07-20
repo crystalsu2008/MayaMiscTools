@@ -11,10 +11,10 @@ if not 'batch_processing_files' in sys.modules:
 else:
     reload(bpf)
 
-if not 'rigging_misc_tools' in sys.modules:
-   import rigging_misc_tools as rmt
+if not 'rigging_tools' in sys.modules:
+   import rigging_tools as rts
 else:
-   reload(rmt)
+   reload(rts)
 
 def openUI():
     MayaMiscTools().openUI()
@@ -33,7 +33,7 @@ class MayaMiscTools(object):
                 tab2=bpf.BatchProcessingFiles()
                 tab2.initUI(self.tabs)
                 #embed tab3
-                tab3=rmt.RiggingMiscTools()
+                tab3=rts.RiggingTools()
                 tab3.initUI(self.tabs)
 
         formLayout( self.form, edit=True, attachForm=((self.tabs, 'top', 0), (self.tabs, 'left', 0), (self.tabs, 'bottom', 0), (self.tabs, 'right', 0)) )

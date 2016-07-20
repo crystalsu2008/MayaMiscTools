@@ -1,4 +1,4 @@
-#This is used to find out all dag nodes those have same name, and fix the problem.
+# This is used to find out all dag nodes those have same name, and fix the problem.
 
 from pymel.core import *
 

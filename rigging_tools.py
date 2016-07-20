@@ -1,17 +1,18 @@
-#Rigging misc tools.
+# This is a collection of few little tools for Rigging and Animation
 
 from pymel.core import *
 import maya.cmds as cmds
+import maya.mel as mel
 
-class RiggingMiscTools(object):
-    'This class include some little function for rigging'
-    label='Rigging Misc Tools' #This label is used to embed in MayaMiscTools's Layout.
+class RiggingTools(object):
+    'This class include some little function for rigging and animation'
+    label='Rigging Tools' #This label is used to embed in MayaMiscTools's Layout.
 
     def initUI(self, parentLayout=None):
         if parentLayout:
             setParent(parentLayout)
         else:
-            self.win=window('riggingMiscTools',t=self.label,w=400)
+            self.win=window('RiggingTools',t=self.label,w=400)
         with frameLayout(bv=False,lv=False,label=self.label) as self.frame:
             with formLayout(numberOfDivisions=100) as self.form:
                 with columnLayout(cat=('both', 0), rs=0, adj=True) as self.clumn:
@@ -33,13 +34,16 @@ class RiggingMiscTools(object):
                     with frameLayout(bv=True,lv=False,label='Joint Info',cll=True) as self.jointInfoFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointInfoClumn:
                             with formLayout(numberOfDivisions=100) as self.showJointlabelForm:
-                                self.showJointlabelButton=button(l='Show Joint\'s label', h=30)
+                                self.showJointlabelButton=button(l='Show Joint\'s Label', h=30)
                                 self.showJointlabelButton.setCommand(self.jointsLabelVisible)
                                 SJLB=self.showJointlabelButton
-                                self.hideJointlabelButton=button(l='Hide Joint\'s label', h=30)
+                                self.hideJointlabelButton=button(l='Hide Joint\'s Label', h=30)
                                 self.hideJointlabelButton.setCommand(self.jointslabelInvisible)
                                 HJLB=self.hideJointlabelButton
                             formLayout(self.showJointlabelForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
+                            self.setJointLabelToNameButton=button(l='Set Joint\'s Label to Joint\'s Name', h=30)
+                            self.setJointLabelToNameButton.setCommand(self.setJointLabelToName)
+                            #SJLN=self.setJointLabelToNameButton
                             with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
                                 self.showJointAxisButton=button(l='Show Joint\'s Local Rotation Axes', h=30)
                                 self.showJointAxisButton.setCommand(self.jointsAxisVisible)
@@ -66,6 +70,8 @@ class RiggingMiscTools(object):
                     self.selectEndJointsButton.setCommand(self.selectEndJoints)
                     self.jointOrientZeroButton=button(l='Set Joint Orient to Zero', h=30)
                     self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
+                    self.kinect1to2Button=button(l='Convert Kinect1 System to Kinect2', h=30)
+                    self.kinect1to2Button.setCommand(self.kinect1to2)
 
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
@@ -136,9 +142,13 @@ class RiggingMiscTools(object):
         value=self.jointSizeSlider.getValue()
         jointDisplayScale(value)
 
+    #Set Joint's Label to Joint's Name
+    def setJointLabelToName(self, val):
+        [setAttr((x+'.otherType'), x.nodeName(), type='string') for x in self.getJoints()]
+
     #Set joint's label visible.
     def jointsLabelVisible(self, val):
-        for x in  self.getJoints():
+        for x in self.getJoints():
             setAttr((x+'.drawLabel'), True)
             if not getAttr((x+'.type')):
                 setAttr((x+'.type'), 18)
@@ -158,7 +168,62 @@ class RiggingMiscTools(object):
         return joints
 
     def openUI(self):
-        if window('riggingMiscTools', q=True, ex=True):
-            deleteUI('riggingMiscTools', wnd=True)
+        if window('RiggingTools', q=True, ex=True):
+            deleteUI('RiggingTools', wnd=True)
         self.initUI()
         showWindow(self.win)
+
+    #Convert Kinect1 Skeleton System to Kinect2
+    def kinect1to2(self, val):
+        bindPoses=dagPose('HIP_CENTER', q=True, bindPose=True)
+        # Rename kinect1 joints name to kinect2
+        rename('HIP_CENTER', 'SPINEBASE')
+        rename('SPINE', 'SPINEMID')
+        rename('SHOULDER_CENTER', 'SPINESHOULDER')
+        rename('SHOULDER_LEFT', 'SHOULDERLEFT')
+        rename('ELBOW_LEFT', 'ELBOWLEFT')
+        rename('WRIST_LEFT', 'WRISTLEFT')
+        rename('HAND_LEFT', 'HANDLEFT')
+        rename('SHOULDER_RIGHT', 'SHOULDERRIGHT')
+        rename('ELBOW_RIGHT', 'ELBOWRIGHT')
+        rename('WRIST_RIGHT', 'WRISTRIGHT')
+        rename('HAND_RIGHT', 'HANDRIGHT')
+        rename('HIP_LEFT', 'HIPLEFT')
+        rename('KNEE_LEFT', 'KNEELEFT')
+        rename('ANKLE_LEFT', 'ANKLELEFT')
+        rename('FOOT_LEFT', 'FOOTLEFT')
+        rename('HIP_RIGHT', 'HIPRIGHT')
+        rename('KNEE_RIGHT', 'KNEERIGHT')
+        rename('ANKLE_RIGHT', 'ANKLERIGHT')
+        rename('FOOT_RIGHT', 'FOOTRIGHT')
+        # Add NECK
+        newJo=insertJoint('SPINESHOULDER')
+        newJo=rename(newJo, 'NECK')
+        pos=getAttr('HEAD.t')*.25
+        joint(newJo, e=True, co=True, r=True, p=pos)
+        # Add HANDTIPLEFT
+        newJo=insertJoint('HANDLEFT')
+        newJo=rename(newJo, 'HANDTIPLEFT')
+        pos=getAttr('HANDLEFT.t')*.5
+        joint('HANDLEFT', e=True, co=True, r=True, p=pos)
+        joint(newJo, e=True, co=True, r=True, p=pos)
+        # Add HANDTIPRIGHT
+        newJo=insertJoint('HANDRIGHT')
+        newJo=rename(newJo, 'HANDTIPRIGHT')
+        pos=getAttr('HANDRIGHT.t')*.5
+        joint('HANDRIGHT', e=True, co=True, r=True, p=pos)
+        joint(newJo, e=True, co=True, r=True, p=pos)
+        # Add THUMBLEFT
+        newJo=joint('WRISTLEFT')
+        newJo=rename(newJo, 'THUMBLEFT')
+        pos=getAttr('HANDLEFT.t')
+        newpos=mel.eval('rot(<<'+str(pos[0])+','+str(pos[1])+','+str(pos[2])+'>>,<<0,1,1>>,-.25*3.1415927)')
+        joint(newJo, e=True, co=True, r=True, p=newpos)
+        # Add THUMBRIGHT
+        newJo=joint('WRISTRIGHT')
+        newJo=rename(newJo, 'THUMBRIGHT')
+        pos=getAttr('HANDRIGHT.t')
+        newpos=mel.eval('rot(<<'+str(pos[0])+','+str(pos[1])+','+str(pos[2])+'>>,<<0,1,-1>>,.25*3.1415927)')
+        joint(newJo, e=True, co=True, r=True, p=newpos)
+        # Set bindPose
+        dagPose('SPINEBASE', bindPose=True, addToPose=True, name=bindPoses[0])
