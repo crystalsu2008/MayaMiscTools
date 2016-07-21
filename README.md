@@ -2,7 +2,7 @@
 MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
 
 __Procedure Name__ : MayaMiscTools<br>
-__Update__ : July 19, 2016<br>
+__Update__ : July 21, 2016<br>
 __Author__ : Chris Su<br>
 __Contact__ : crystalsu2008@gmail.com<br>
 
