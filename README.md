@@ -2,7 +2,7 @@
 MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
 
 __Procedure Name__ : MayaMiscTools<br>
-__Update__ : July 21, 2016<br>
+__Update__ : July 22, 2016<br>
 __Author__ : Chris Su<br>
 __Contact__ : crystalsu2008@gmail.com<br>
 
@@ -21,14 +21,16 @@ This procedure is used to execute a paragraph of script in the selected files.
 
 * Rigging Tools<br>
 This is a collection of few little tools for Rigging and Animation.
-    * Quickly set joint's size.
+    * Quick set joint's size.
     * Show or hide joint's label.
     * Show or hide joint's Local Rotation Axis.
     * (Lock and Hide) or (Unlocked and Show) joint's transform attributes.
     * Select joints at the root of hierarchy.
     * Select joints at the end of hierarchy.
+    * Quick change joints color, remove joints color and random set joints color.
     * Set joint orient attribute to zero.
     * Convert Kinect1 Skeleton System to Kinect2.
+    * Reset the BindPose to current pose.
 
 
 * Others<br>
