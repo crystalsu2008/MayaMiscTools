@@ -31,6 +31,9 @@ This is a collection of few little tools for Rigging and Animation.
     * Set joint orient attribute to zero.
     * Convert Kinect1 Skeleton System to Kinect2.
     * Reset the BindPose to current pose.
+    * Remove the Invalid Intermediate nodes under the selected objects.
+    * Show the Intermediate nodes under the selected objects.
+    * Quick switch between the Final objects and the Origin Intermediate objects. It's very useful to do some modify before the Construction History.
 
 
 * Others<br>

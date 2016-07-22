@@ -50,19 +50,19 @@ class RiggingTools(object):
                             self.setJointLabelToNameButton.setCommand(self.setJointLabelToName)
                             #SJLN=self.setJointLabelToNameButton
                             with formLayout(numberOfDivisions=100) as self.showJointlabelForm:
-                                self.showJointlabelButton=button(l='Label [O]', ann='Show Joint\'s Label', h=30)
+                                self.showJointlabelButton=button(l='Label [o]', ann='Show Joint\'s Label', h=30)
                                 self.showJointlabelButton.setCommand(self.jointsLabelVisible)
                                 SJLB=self.showJointlabelButton
-                                self.hideJointlabelButton=button(l='Label [X]', ann='Hide Joint\'s Label', h=30)
+                                self.hideJointlabelButton=button(l='Label [-]', ann='Hide Joint\'s Label', h=30)
                                 self.hideJointlabelButton.setCommand(self.jointslabelInvisible)
                                 HJLB=self.hideJointlabelButton
                             formLayout(self.showJointlabelForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
 
                             with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
-                                self.showJointAxisButton=button(l='Axis [O]', ann='Show Joint\'s Local Rotation Axes', h=30)
+                                self.showJointAxisButton=button(l='Axis [o]', ann='Show Joint\'s Local Rotation Axes', h=30)
                                 self.showJointAxisButton.setCommand(self.jointsAxisVisible)
                                 SJAB=self.showJointAxisButton
-                                self.hideJointAxisButton=button(l='Axis [X]', ann='Hide Joint\'s Local Rotation Axes', h=30)
+                                self.hideJointAxisButton=button(l='Axis [-]', ann='Hide Joint\'s Local Rotation Axes', h=30)
                                 self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
                                 HJAB=self.hideJointAxisButton
                             formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
@@ -101,16 +101,43 @@ class RiggingTools(object):
                             formLayout(self.randomColorForm, e=True, af=[(RJCB,'top',0), (RJCB,'left',0), (CJCB,'right',0), (CJCB,'top',0)], ap=[(RJCB,'right',0,50), (CJCB,'left',0,50)])
 
                     with frameLayout(bv=True,lv=True,label='Other Rigging Tools',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.otherRigToolFrame:
-                        with gridLayout(cellWidthHeight=(90, 30), columnsResizable=True) as self.otherRigToolGrid:
+                        with gridLayout(cellWidthHeight=(110, 30), columnsResizable=True) as self.otherRigToolGrid:
                             self.jointOrientZeroButton=button(l='Orient = 0', ann='Set Joint Orient to Zero')
                             self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
                             self.kinect1to2Button=button(l='Kinect 1 -> 2', ann='Convert Kinect1 System to Kinect2')
                             self.kinect1to2Button.setCommand(self.kinect1to2)
                             self.resetBindPoseButton=button(l='Reset BindPose', ann='Set current pose to BindPose.')
                             self.resetBindPoseButton.setCommand(self.resetBindPose)
+                            self.removeInvalidIntermediateButton=button(l='[X] Bad Intermediate', ann='Remove the Invalid Intermediate nodes under the selected objects.')
+                            self.removeInvalidIntermediateButton.setCommand(self.removeInvalidIntermediate)
+                            self.showIntermediateButton=button(l='[o] Intermediate', ann='Show the Intermediate nodes under the selected objects.')
+                            self.showIntermediateButton.setCommand(self.showIntermediate)
+                            self.swithIntermediateButton=button(l='-><- Intermediate', ann='Quick switch between the Final objects and the Origin Intermediate objects. It\'s very useful to do some modify before the Construction History.')
+                            self.swithIntermediateButton.setCommand(self.swithIntermediate)
 
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
+
+    def removeInvalidIntermediate(self, val):
+        allShapes=listRelatives(children=True, shapes=True)
+        noIntermediateObjs=listRelatives(children=True, shapes=True, noIntermediate=True)
+        intermediateObj=list(set(allShapes)-set(noIntermediateObjs))
+        for x in intermediateObj:
+            if not len(listConnections(x)):
+                delete(x)
+
+    def showIntermediate(self, val):
+        allShapes=listRelatives(children=True, shapes=True)
+        noIntermediateObjs=listRelatives(children=True, shapes=True, noIntermediate=True)
+        intermediateObj=list(set(allShapes)-set(noIntermediateObjs))
+        [setAttr((x+'.intermediateObject'), False) for x in intermediateObj]
+
+    def swithIntermediate(self, val):
+        allShapes=listRelatives(children=True, shapes=True)
+        noIntermediateObjs=listRelatives(children=True, shapes=True, noIntermediate=True)
+        intermediateObj=list(set(allShapes)-set(noIntermediateObjs))
+        [setAttr((x+'.intermediateObject'), False) for x in intermediateObj]
+        [setAttr((x+'.intermediateObject'), True) for x in noIntermediateObjs]
 
     def resetBindPose(self, val):
         for x in self.findAllRootJoints():

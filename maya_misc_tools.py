@@ -27,13 +27,13 @@ class MayaMiscTools(object):
         with formLayout() as self.form:
             with tabLayout(innerMarginWidth=5, innerMarginHeight=5) as self.tabs:
                 #embed tab1
-                tab1=unm.UniqueNameManager()
+                tab1=rts.RiggingTools()
                 tab1.initUI(self.tabs)
                 #embed tab2
-                tab2=bpf.BatchProcessingFiles()
+                tab2=unm.UniqueNameManager()
                 tab2.initUI(self.tabs)
                 #embed tab3
-                tab3=rts.RiggingTools()
+                tab3=bpf.BatchProcessingFiles()
                 tab3.initUI(self.tabs)
 
         formLayout( self.form, edit=True, attachForm=((self.tabs, 'top', 0), (self.tabs, 'left', 0), (self.tabs, 'bottom', 0), (self.tabs, 'right', 0)) )
