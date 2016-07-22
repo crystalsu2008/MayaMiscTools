@@ -3,6 +3,7 @@
 from pymel.core import *
 import maya.cmds as cmds
 import maya.mel as mel
+import random
 
 class RiggingTools(object):
     'This class include some little function for rigging and animation'
@@ -80,18 +81,22 @@ class RiggingTools(object):
                     with frameLayout(bv=True,lv=True,label='Joints Color',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointsColorFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointsColorClumn:
                             with formLayout(numberOfDivisions=100) as self.jointsColorForm:
-                                self.jointsColorSlider=colorSliderGrp( label='Joint Color', rgb=(0.000, 0.001, 0.117), cw=(1, 70) )
+                                self.jointsColorSlider=colorSliderGrp( label='Joint Color', rgb=(0.188, 0.404, 0.631), cw=(1, 70) )
                                 JCS=self.jointsColorSlider
                                 self.setSelectedJointColorButton=button(l='Selected', ann="Set selected joints color.")
+                                self.setSelectedJointColorButton.setCommand(self.setSelectedJointColor)
                                 SSJCB=self.setSelectedJointColorButton
                                 self.setHierarchyJointColorButton=button(l='Hierarchy', ann="Set hierarchy joints color.")
+                                self.setHierarchyJointColorButton.setCommand(self.setHierarchyJointColor)
                                 SHJCB=self.setHierarchyJointColorButton
                             formLayout(self.jointsColorForm, e=True, af=[(JCS,'top',0), (JCS,'left',0), (SSJCB,'top',0), (SHJCB,'top',0), (SHJCB,'right',0)], ap=[(JCS,'right',0,60), (SSJCB,'left',0,60), (SSJCB,'right',0,80), (SHJCB,'left',0,80)])
-                            self.randomColorCheck=checkBoxGrp(cw=[1,200], numberOfCheckBoxes=3, label='Select Color Elements to Random Set', labelArray3=['H', 'S', 'V'])
+                            self.randomColorCheck=checkBoxGrp(cw=[1,200], numberOfCheckBoxes=3, label='Select Color Elements to Random Set', labelArray3=['H', 'S', 'V'], v1=True)
                             with formLayout(numberOfDivisions=100) as self.randomColorForm:
                                 self.randomJointColorButton=button(l='Random Color', ann='Based on the above parameters to random set joint\'s color.', h=30)
+                                self.randomJointColorButton.setCommand(self.randomJointColor)
                                 RJCB=self.randomJointColorButton
                                 self.cleanJointColorButton=button(l='Clean Color', ann='Remove joint\'s color.', h=30)
+                                self.cleanJointColorButton.setCommand(self.cleanJointColor)
                                 CJCB=self.cleanJointColorButton
                             formLayout(self.randomColorForm, e=True, af=[(RJCB,'top',0), (RJCB,'left',0), (CJCB,'right',0), (CJCB,'top',0)], ap=[(RJCB,'right',0,50), (CJCB,'left',0,50)])
 
@@ -102,33 +107,89 @@ class RiggingTools(object):
                             self.kinect1to2Button=button(l='Kinect 1 -> 2', ann='Convert Kinect1 System to Kinect2')
                             self.kinect1to2Button.setCommand(self.kinect1to2)
                             self.resetBindPoseButton=button(l='Reset BindPose', ann='Set current pose to BindPose.')
+                            self.resetBindPoseButton.setCommand(self.resetBindPose)
 
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
+    def resetBindPose(self, val):
+        for x in self.findAllRootJoints():
+            print x
+            # Get bindPose.
+            bindPoses=dagPose(x, q=True, bindPose=True)
+            print bindPoses
+            # Get all hierarchy joints.
+            joints=listRelatives(x, ad=True, typ='joint')
+            print joints
+            # And add all hierarchy joints into the bindPose.
+            dagPose(joints, addToPose=True, name=bindPoses[0])
+            # Reset the bindPose at current pose.
+            dagPose(joints, reset=True, bindPose=True)
+        '''
+        # Go to bindPose.
+        cmds.dagPose([''], restore=True, bindPose=True)
+        # Reset the pose on the selected joints. If you are resetting pose data for a bindPose, take care.
+        cmds.dagPose([''], reset=True, bindPose=True)
+        # Finding out bindPose's name.
+        cmds.dagPose([''], query=True, bindPose=True)
+        # Adding the selected items to the dagPose.
+        cmds.dagPose([''],addToPose=True, name='bindPose3')
+        '''
+
+    def randomJointColor(self, val):
+        color=self.jointsColorSlider.getHsvValue()
+        hsv=[0,0,0]
+        for x in self.getJoints():
+            hsv[0] = random.random() if self.randomColorCheck.getValue1() else color[0]/360
+            hsv[1] = random.random() if self.randomColorCheck.getValue2() else color[1]
+            hsv[2] = random.random() if self.randomColorCheck.getValue3() else color[2]
+            rgb=mel.eval('hsv_to_rgb(<<'+str(hsv[0])+','+str(hsv[1])+','+str(hsv[2])+'>>)')
+            setAttr((x+'.useObjectColor'), 2)
+            setAttr((x+'.wireColorRGB'), rgb)
+
+    def cleanJointColor(self, val):
+        [setAttr((x+'.useObjectColor'), 0) for x in self.getJoints()]
+
+    def setSelectedJointColor(self, val):
+        color=self.jointsColorSlider.getRgbValue()
+        for x in ls(sl=True, typ='joint'):
+            setAttr((x+'.useObjectColor'), 2)
+            setAttr((x+'.wireColorRGB'), color)
+
+    def setHierarchyJointColor(self, val):
+        color=self.jointsColorSlider.getRgbValue()
+        for x in self.getJoints():
+            setAttr((x+'.useObjectColor'), 2)
+            setAttr((x+'.wireColorRGB'), color)
+
+    # Finding out given joint's root joint.
     def findRootJoint(self, jo):
         pa=listRelatives(jo, parent=True, typ='joint')
         return self.findRootJoint(jo=pa[0]) if len(pa) else jo
 
-    #Select joints at the root of hierarchy.
-    def selectRootJoints(self, val):
+    # If there have some selected joints then return all selected joint's root joints otherwise return all root joints.
+    def findAllRootJoints(self):
         seljoints=ls(sl=True, typ='joint')
         joints=[]
         if(len(seljoints)):
             [joints.append(self.findRootJoint(jo=x)) for x in seljoints if not x in joints]
-            select(joints)
         else:
-            select( [x for x in ls(typ='joint') if not len(listRelatives(x, parent=True, typ='joint'))] )
+            joints=[x for x in ls(typ='joint') if not len(listRelatives(x, parent=True, typ='joint'))]
+        return joints
 
-    #Select joints at the end of hierarchy.
+    # Select joints at the root of hierarchy.
+    def selectRootJoints(self, val):
+        select(self.findAllRootJoints())
+
+    # Select joints at the end of hierarchy.
     def selectEndJoints(self, val):
         select( [x for x in self.getJoints() if not len(listRelatives(x, ad=True, typ='joint'))] )
 
-    #Set joint orient attribute to zero.
+    # Set joint orient attribute to zero.
     def setJointOrientZero(self, val):
         [setAttr((x+'.jointOrient'), (0,0,0)) for x in self.getJoints(no_selected_return_all=False)]
 
-    #Set joint's Transform Attributes Locked and Invisible.
+    # Set joint's Transform Attributes Locked and Invisible.
     def lockAndHideJointsAttr(self, val):
         for x in self.getJoints():
             if self.lockAndHideCheck.getValue1():
@@ -144,7 +205,7 @@ class RiggingTools(object):
                 setAttr((x+'.sy'), lock=True, keyable=False)
                 setAttr((x+'.sz'), lock=True, keyable=False)
 
-    #Set joint's Transform Attributes Unlocked and Visible.
+    # Set joint's Transform Attributes Unlocked and Visible.
     def unlockAndShowJointsAttr(self, val):
         for x in self.getJoints():
             if self.lockAndHideCheck.getValue1():
@@ -160,11 +221,11 @@ class RiggingTools(object):
                 setAttr((x+'.sy'), lock=False, keyable=True)
                 setAttr((x+'.sz'), lock=False, keyable=True)
 
-    #Set joint's Local Rotation Axes visible.
+    # Set joint's Local Rotation Axes visible.
     def jointsAxisInvisible(self, val):
         [setAttr((x+'.displayLocalAxis'), False) for x in self.getJoints()]
 
-    #Set joint's Local Rotation Axes visible.
+    # Set joint's Local Rotation Axes visible.
     def jointsAxisVisible(self, val):
         [setAttr((x+'.displayLocalAxis'), True) for x in self.getJoints()]
 
@@ -172,11 +233,11 @@ class RiggingTools(object):
         value=self.jointSizeSlider.getValue()
         jointDisplayScale(value)
 
-    #Set Joint's Label to Joint's Name
+    # Set Joint's Label to Joint's Name
     def setJointLabelToName(self, val):
         [setAttr((x+'.otherType'), x.nodeName(), type='string') for x in self.getJoints()]
 
-    #Set joint's label visible.
+    # Set joint's label visible.
     def jointsLabelVisible(self, val):
         for x in self.getJoints():
             setAttr((x+'.drawLabel'), True)
@@ -184,7 +245,7 @@ class RiggingTools(object):
                 setAttr((x+'.type'), 18)
                 setAttr((x+'.otherType'), x.nodeName(), type='string')
 
-    #Set joint's label invisible.
+    # Set joint's label invisible.
     def jointslabelInvisible(self, val):
         [setAttr((x+'.drawLabel'), False) for x in self.getJoints()]
 
@@ -203,7 +264,7 @@ class RiggingTools(object):
         self.initUI()
         showWindow(self.win)
 
-    #Convert Kinect1 Skeleton System to Kinect2
+    # Convert Kinect1 Skeleton System to Kinect2
     def kinect1to2(self, val):
         bindPoses=dagPose('HIP_CENTER', q=True, bindPose=True)
         # Rename kinect1 joints name to kinect2
@@ -259,13 +320,3 @@ class RiggingTools(object):
         K2Joints=['SPINEBASE', 'SPINEMID', 'SPINESHOULDER', 'NECK', 'HEAD', 'SHOULDERLEFT', 'ELBOWLEFT', 'WRISTLEFT', 'HANDLEFT', 'HANDTIPLEFT', 'THUMBLEFT', 'SHOULDERRIGHT',\
         'ELBOWRIGHT', 'WRISTRIGHT', 'HANDRIGHT', 'HANDTIPRIGHT', 'THUMBRIGHT', 'HIPLEFT', 'KNEELEFT', 'ANKLELEFT', 'FOOTLEFT', 'HIPRIGHT', 'KNEERIGHT', 'ANKLERIGHT', 'FOOTRIGHT']
         dagPose(K2Joints, addToPose=True, name=bindPoses[0])
-        '''
-        # Go to bindPose.
-        cmds.dagPose([''], restore=True, bindPose=True)
-        # Reset the pose on the selected joints. If you are resetting pose data for a bindPose, take care.
-        cmds.dagPose([''], reset=True, bindPose=Tru
-        # Finding out bindPose's name.
-        cmds.dagPose([''], query=True, bindPose=True)
-        # Adding the selected items to the dagPose.
-        cmds.dagPose([''],addToPose=True, name='bindPose3')
-        '''
