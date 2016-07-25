@@ -13,28 +13,32 @@ __Contact__ : crystalsu2008@gmail.com<br>
 Put all scripts in a folder. It's recommended to place this folder in your Maya scripts folder, but it can be anywhere. Once you have the MayaMiscTools folder where you want it to be, then just drag and drop the "install.mel" file into Maya (drop in any viewport). This will add MayaMiscTools tool to the current shelf.<br>
 
 ## Functions:
+* Rigging Tools<br>
+This is a collection of few little tools for Rigging and Animation.
+    * -Quick set joint's size.<br>
+    -Quick change joints color, remove joints color and random set joints color.
+    * -Show or hide joint's label.<br>
+    -Show or hide joint's Local Rotation Axis.
+    * -Manager all joints pose in the scenes.<br>
+    -Go to the pose or bindPose.<br>
+    -Remove invalid pose.<br>
+    -Reset the pose to current pose.<br>
+    -Rebind selected skin geometry at current pose, and keep the skin weights.
+    * -(Lock and Hide) or (Unlocked and Show) joint's transform attributes.
+    * -Select joints at the root of hierarchy.<br>
+    -Select joints at the end of hierarchy.
+    * -Set joint orient attribute to zero.<br>
+    -Convert Kinect1 Skeleton System to Kinect2.<br>
+    -Remove the Invalid Intermediate nodes under the selected objects.<br>
+    -Show the Intermediate nodes under the selected objects.<br>
+    -Quick switch between the Final objects and the Origin Intermediate objects. It's very useful to do some modify before the Construction History.
+
+
 * Unique Name Manager<br>
 This function is used to find out all dag nodes in the scenes those have same name, and fix the problem.
 
 * Batch Processing Files```(It's not done yet!!!)```<br>
 This procedure is used to execute a paragraph of script in the selected files.
-
-* Rigging Tools<br>
-This is a collection of few little tools for Rigging and Animation.
-    * Quick set joint's size.
-    * Show or hide joint's label.
-    * Show or hide joint's Local Rotation Axis.
-    * (Lock and Hide) or (Unlocked and Show) joint's transform attributes.
-    * Select joints at the root of hierarchy.
-    * Select joints at the end of hierarchy.
-    * Quick change joints color, remove joints color and random set joints color.
-    * Set joint orient attribute to zero.
-    * Convert Kinect1 Skeleton System to Kinect2.
-    * Reset the BindPose to current pose.
-    * Remove the Invalid Intermediate nodes under the selected objects.
-    * Show the Intermediate nodes under the selected objects.
-    * Quick switch between the Final objects and the Origin Intermediate objects. It's very useful to do some modify before the Construction History.
-
 
 * Others<br>
 This is a collection of some not commonly tools.

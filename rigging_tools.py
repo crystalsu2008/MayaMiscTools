@@ -9,6 +9,10 @@ class RiggingTools(object):
     'This class include some little function for rigging and animation'
     label='Rigging Tools' #This label is used to embed in MayaMiscTools's Layout.
 
+    list_poses=[]
+    list_skins=[]
+    list_geometries=[]
+
     def initUI(self, parentLayout=None):
         if parentLayout:
             setParent(parentLayout)
@@ -18,7 +22,7 @@ class RiggingTools(object):
             with formLayout(numberOfDivisions=100) as self.form:
                 with columnLayout(cat=('both', 0), rs=0, adj=True) as self.clumn:
 
-                    with frameLayout(bv=True,lv=True,label='Joint Size',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointSizeFrame:
+                    with frameLayout(bv=True,lv=True,label='Joint Size & Color',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointSizeFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointSizeClumn:
                             self.jointSizeSlider=floatSliderGrp(cw=[1,60], label='Joint Size', field=True, minValue=0.01, maxValue=10.0, fieldMinValue=0.01, fieldMaxValue=100.0, precision=2, value=1)
                             self.jointSizeSlider.changeCommand(self.setJointSize)
@@ -31,54 +35,6 @@ class RiggingTools(object):
                                 button(l='1', h=30, command='cmds.jointDisplayScale(1)')
                                 for i in range(2,11):
                                     button(l=(i), h=30, command=('cmds.jointDisplayScale('+str(i)+')'))
-
-                    with frameLayout(bv=True,lv=True,label='Joint Lock and Hide',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointLockAndHideFrame:
-                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointLockAndHideFrame:
-                            self.lockAndHideCheck=checkBoxGrp(cw=[1,150], numberOfCheckBoxes=3, label='Select Attributes to Apply', labelArray3=['Translate', 'Rotate', 'Scale'])
-                            with formLayout(numberOfDivisions=100) as self.lockAndHideForm:
-                                self.unlockAndShowButton=button(l='Unlock && Show', ann='Unlock and Show Joint\'s Transform Attributes', h=30)
-                                self.unlockAndShowButton.setCommand(self.unlockAndShowJointsAttr)
-                                USB=self.unlockAndShowButton
-                                self.lockAndHideButton=button(l='Lock && Hide', ann='Lock and Hide Joint\'s Transform Attributes', h=30)
-                                self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
-                                LHB=self.lockAndHideButton
-                            formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
-
-                    with frameLayout(bv=True,lv=True,label='Joint Info',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointInfoFrame:
-                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointInfoClumn:
-                            self.setJointLabelToNameButton=button(l='Label = Name', ann='Set Joint\'s Label to Joint\'s Name', h=30)
-                            self.setJointLabelToNameButton.setCommand(self.setJointLabelToName)
-                            #SJLN=self.setJointLabelToNameButton
-                            with formLayout(numberOfDivisions=100) as self.showJointlabelForm:
-                                self.showJointlabelButton=button(l='Label [o]', ann='Show Joint\'s Label', h=30)
-                                self.showJointlabelButton.setCommand(self.jointsLabelVisible)
-                                SJLB=self.showJointlabelButton
-                                self.hideJointlabelButton=button(l='Label [-]', ann='Hide Joint\'s Label', h=30)
-                                self.hideJointlabelButton.setCommand(self.jointslabelInvisible)
-                                HJLB=self.hideJointlabelButton
-                            formLayout(self.showJointlabelForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
-
-                            with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
-                                self.showJointAxisButton=button(l='Axis [o]', ann='Show Joint\'s Local Rotation Axes', h=30)
-                                self.showJointAxisButton.setCommand(self.jointsAxisVisible)
-                                SJAB=self.showJointAxisButton
-                                self.hideJointAxisButton=button(l='Axis [-]', ann='Hide Joint\'s Local Rotation Axes', h=30)
-                                self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
-                                HJAB=self.hideJointAxisButton
-                            formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
-
-                    with frameLayout(bv=True,lv=True,label='Pick Out Joints',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.pickOutJointsFrame:
-                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.pickOutJointsClumn:
-                            with formLayout(numberOfDivisions=100) as self.pickOutJointsForm:
-                                self.selectRootJointsButton=button(l='Root Joints', ann='Select Joints at The Root of Hierarchy', h=30)
-                                self.selectRootJointsButton.setCommand(self.selectRootJoints)
-                                SRJB=self.selectRootJointsButton
-                                self.selectEndJointsButton=button(l='End Joints', ann='Select Joints at The End of Hierarchy', h=30)
-                                self.selectEndJointsButton.setCommand(self.selectEndJoints)
-                                SEJB=self.selectEndJointsButton
-                            formLayout(self.pickOutJointsForm, e=True, af=[(SRJB,'top',0), (SRJB,'left',0), (SEJB,'right',0), (SEJB,'top',0)], ap=[(SRJB,'right',0,50), (SEJB,'left',0,50)])
-
-                    with frameLayout(bv=True,lv=True,label='Joints Color',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointsColorFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointsColorClumn:
                             with formLayout(numberOfDivisions=100) as self.jointsColorForm:
                                 self.jointsColorSlider=colorSliderGrp( label='Joint Color', rgb=(0.188, 0.404, 0.631), cw=(1, 70) )
@@ -100,14 +56,85 @@ class RiggingTools(object):
                                 CJCB=self.cleanJointColorButton
                             formLayout(self.randomColorForm, e=True, af=[(RJCB,'top',0), (RJCB,'left',0), (CJCB,'right',0), (CJCB,'top',0)], ap=[(RJCB,'right',0,50), (CJCB,'left',0,50)])
 
+                    with frameLayout(bv=True,lv=True,label='Joint Info',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointInfoFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointInfoClumn:
+                            self.setJointLabelToNameButton=button(l='Label = Name', ann='Set Joint\'s Label to Joint\'s Name', h=30)
+                            self.setJointLabelToNameButton.setCommand(self.setJointLabelToName)
+                            #SJLN=self.setJointLabelToNameButton
+                            with formLayout(numberOfDivisions=100) as self.showJointlabelForm:
+                                self.showJointlabelButton=button(l='Label [o]', ann='Show Joint\'s Label', h=30)
+                                self.showJointlabelButton.setCommand(self.jointsLabelVisible)
+                                SJLB=self.showJointlabelButton
+                                self.hideJointlabelButton=button(l='Label [-]', ann='Hide Joint\'s Label', h=30)
+                                self.hideJointlabelButton.setCommand(self.jointslabelInvisible)
+                                HJLB=self.hideJointlabelButton
+                            formLayout(self.showJointlabelForm, e=True, af=[(SJLB,'top',0), (SJLB,'left',0), (HJLB,'right',0), (HJLB,'top',0)], ap=[(SJLB,'right',0,50), (HJLB,'left',0,50)])
+                            with formLayout(numberOfDivisions=100) as self.showJointAxisForm:
+                                self.showJointAxisButton=button(l='Axis [o]', ann='Show Joint\'s Local Rotation Axes', h=30)
+                                self.showJointAxisButton.setCommand(self.jointsAxisVisible)
+                                SJAB=self.showJointAxisButton
+                                self.hideJointAxisButton=button(l='Axis [-]', ann='Hide Joint\'s Local Rotation Axes', h=30)
+                                self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
+                                HJAB=self.hideJointAxisButton
+                            formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
+
+                    with frameLayout(bv=True,lv=True,label='Bind Pose',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.bindPoseFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.bindPoseClumn:
+                            self.queryPosesButton=button(l='Query Poses', ann='Finding out the poses connect to the joints.', h=30)
+                            self.queryPosesButton.setCommand(self.queryPoses)
+                            with paneLayout(configuration='vertical3', w=330) as self.bindPosePane:
+                                self.posesList = textScrollList(ams=True)
+                                self.posesList.selectCommand(self.poseselcmd)
+                                self.skinsList = textScrollList(ams=True)
+                                self.skinsList.selectCommand(self.skinselcmd)
+                                self.geometriesList = textScrollList(ams=True)
+                                self.geometriesList.selectCommand(self.geometryselcmd)
+                            with formLayout(numberOfDivisions=100) as self.gotoPoseForm:
+                                self.gotoSelectedPoseButton=button(l='Go to Pose', ann='Go to selected pose.', h=30)
+                                self.gotoSelectedPoseButton.setCommand(self.gotoSelectedPose)
+                                GSPB=self.gotoSelectedPoseButton
+                                self.removeInvalidPosesButton=button(l='[x] Invalid Poses', ann='Remove invalid poses.', h=30)
+                                self.removeInvalidPosesButton.setCommand(self.removeInvalidPoses)
+                                RIPB=self.removeInvalidPosesButton
+                            formLayout(self.gotoPoseForm, e=True, af=[(GSPB,'top',0), (GSPB,'left',0), (RIPB,'right',0), (RIPB,'top',0)], ap=[(GSPB,'right',0,50), (RIPB,'left',0,50)])
+                            with formLayout(numberOfDivisions=100) as self.resetPoseForm:
+                                self.resetPoseButton=button(l='Reset Pose', ann='Set current pose to selected pose.', h=30)
+                                self.resetPoseButton.setCommand(self.resetPose)
+                                RBPB=self.resetPoseButton
+                                self.rebindSkinButton=button(l='Rebind Skin', ann='Rebind selected skin geometry at current pose, and keep the skin weights.', h=30)
+
+                                RBSB=self.rebindSkinButton
+                            formLayout(self.resetPoseForm, e=True, af=[(RBPB,'top',0), (RBPB,'left',0), (RBSB,'right',0), (RBSB,'top',0)], ap=[(RBPB,'right',0,50), (RBSB,'left',0,50)])
+
+                    with frameLayout(bv=True,lv=True,label='Joint Lock and Hide',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointLockAndHideFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointLockAndHideFrame:
+                            self.lockAndHideCheck=checkBoxGrp(cw=[1,150], numberOfCheckBoxes=3, label='Select Attributes to Apply', labelArray3=['Translate', 'Rotate', 'Scale'], v1=True, v2=True, v3=True)
+                            with formLayout(numberOfDivisions=100) as self.lockAndHideForm:
+                                self.unlockAndShowButton=button(l='Unlock && Show', ann='Unlock and Show Joint\'s Transform Attributes', h=30)
+                                self.unlockAndShowButton.setCommand(self.unlockAndShowJointsAttr)
+                                USB=self.unlockAndShowButton
+                                self.lockAndHideButton=button(l='Lock && Hide', ann='Lock and Hide Joint\'s Transform Attributes', h=30)
+                                self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
+                                LHB=self.lockAndHideButton
+                            formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
+
+                    with frameLayout(bv=True,lv=True,label='Pick Out Joints',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.pickOutJointsFrame:
+                        with columnLayout(cat=('both', 0), rs=0, adj=True) as self.pickOutJointsClumn:
+                            with formLayout(numberOfDivisions=100) as self.pickOutJointsForm:
+                                self.selectRootJointsButton=button(l='Root Joints', ann='Select Joints at The Root of Hierarchy', h=30)
+                                self.selectRootJointsButton.setCommand(self.selectRootJoints)
+                                SRJB=self.selectRootJointsButton
+                                self.selectEndJointsButton=button(l='End Joints', ann='Select Joints at The End of Hierarchy', h=30)
+                                self.selectEndJointsButton.setCommand(self.selectEndJoints)
+                                SEJB=self.selectEndJointsButton
+                            formLayout(self.pickOutJointsForm, e=True, af=[(SRJB,'top',0), (SRJB,'left',0), (SEJB,'right',0), (SEJB,'top',0)], ap=[(SRJB,'right',0,50), (SEJB,'left',0,50)])
+
                     with frameLayout(bv=True,lv=True,label='Other Rigging Tools',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.otherRigToolFrame:
                         with gridLayout(cellWidthHeight=(110, 30), columnsResizable=True) as self.otherRigToolGrid:
                             self.jointOrientZeroButton=button(l='Orient = 0', ann='Set Joint Orient to Zero')
                             self.jointOrientZeroButton.setCommand(self.setJointOrientZero)
                             self.kinect1to2Button=button(l='Kinect 1 -> 2', ann='Convert Kinect1 System to Kinect2')
                             self.kinect1to2Button.setCommand(self.kinect1to2)
-                            self.resetBindPoseButton=button(l='Reset BindPose', ann='Set current pose to BindPose.')
-                            self.resetBindPoseButton.setCommand(self.resetBindPose)
                             self.removeInvalidIntermediateButton=button(l='[X] Bad Intermediate', ann='Remove the Invalid Intermediate nodes under the selected objects.')
                             self.removeInvalidIntermediateButton.setCommand(self.removeInvalidIntermediate)
                             self.showIntermediateButton=button(l='[o] Intermediate', ann='Show the Intermediate nodes under the selected objects.')
@@ -117,6 +144,68 @@ class RiggingTools(object):
 
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
+
+    def resetPose(self, val):
+        poses=[self.list_poses[i-1] for i in self.posesList.getSelectIndexedItem()]
+        for x in poses:
+            dagPose(dagPose(x, query=True, members=True), x, reset=True)
+
+    def removeInvalidPoses(self, val):
+        invalidPoses=[x for x in ls(type='dagPose') if not len(listConnections((x+'.message'), type='skinCluster'))]
+        delete(invalidPoses)
+        self.queryPoses(val)
+
+    def gotoSelectedPose(self, val):
+        [dagPose(self.list_poses[i-1], restore=True) for i in self.posesList.getSelectIndexedItem()]
+        '''
+        # Go to bindPose.
+        cmds.dagPose([''], restore=True, bindPose=True)
+        # Reset the pose on the selected joints. If you are resetting pose data for a bindPose, take care.
+        cmds.dagPose([''], reset=True, bindPose=True)
+        # Finding out bindPose's name.
+        cmds.dagPose([''], query=True, bindPose=True)
+        # Adding the selected items to the dagPose.
+        cmds.dagPose([''],addToPose=True, name='bindPose3')
+        '''
+
+    def poseselcmd(self):
+        self.list_skins=[]
+        self.skinsList.removeAll()
+        self.list_geometries=[]
+        self.geometriesList.removeAll()
+        selectedItemPoses=[]
+        [selectedItemPoses.append(self.list_poses[i-1]) for i in self.posesList.getSelectIndexedItem()]
+        [self.list_skins.extend(listConnections((x+'.message'), type='skinCluster')) for x in selectedItemPoses]
+        [self.skinsList.append(x) for x in self.list_skins]
+
+    def skinselcmd(self):
+        self.list_geometries=[]
+        self.geometriesList.removeAll()
+        selectedItemSkins=[]
+        [selectedItemSkins.append(self.list_skins[i-1]) for i in self.skinsList.getSelectIndexedItem()]
+        [self.list_geometries.extend(listConnections((x+'.outputGeometry'))) for x in selectedItemSkins]
+        [self.geometriesList.append(x) for x in self.list_geometries]
+
+    def geometryselcmd(self):
+        selectedItemGeometry=[self.list_geometries[i-1] for i in self.geometriesList.getSelectIndexedItem()]
+        #[selectedItemGeometry.append(self.list_geometries[i-1]) for i in self.geometriesList.getSelectIndexedItem()]
+        select(selectedItemGeometry)
+
+    def queryPoses(self, val):
+        self.list_poses=[]
+        self.posesList.removeAll()
+        self.list_skins=[]
+        self.skinsList.removeAll()
+        self.list_geometries=[]
+        self.geometriesList.removeAll()
+        bp=''
+        inv=''
+        #for x in dagPose(self.getJoints(), query=True, bindPose=True):
+        for x in ls(type='dagPose'):
+            self.list_poses.append(x)
+            bp='<BP>' if getAttr(x+'.bindPose') else ''
+            inv='<IN>' if not len(listConnections((x+'.message'), type='skinCluster')) else ''
+            self.posesList.append(x+bp+inv)
 
     def removeInvalidIntermediate(self, val):
         allShapes=listRelatives(children=True, shapes=True)
@@ -138,30 +227,6 @@ class RiggingTools(object):
         intermediateObj=list(set(allShapes)-set(noIntermediateObjs))
         [setAttr((x+'.intermediateObject'), False) for x in intermediateObj]
         [setAttr((x+'.intermediateObject'), True) for x in noIntermediateObjs]
-
-    def resetBindPose(self, val):
-        for x in self.findAllRootJoints():
-            print x
-            # Get bindPose.
-            bindPoses=dagPose(x, q=True, bindPose=True)
-            print bindPoses
-            # Get all hierarchy joints.
-            joints=listRelatives(x, ad=True, typ='joint')
-            print joints
-            # And add all hierarchy joints into the bindPose.
-            dagPose(joints, addToPose=True, name=bindPoses[0])
-            # Reset the bindPose at current pose.
-            dagPose(joints, reset=True, bindPose=True)
-        '''
-        # Go to bindPose.
-        cmds.dagPose([''], restore=True, bindPose=True)
-        # Reset the pose on the selected joints. If you are resetting pose data for a bindPose, take care.
-        cmds.dagPose([''], reset=True, bindPose=True)
-        # Finding out bindPose's name.
-        cmds.dagPose([''], query=True, bindPose=True)
-        # Adding the selected items to the dagPose.
-        cmds.dagPose([''],addToPose=True, name='bindPose3')
-        '''
 
     def randomJointColor(self, val):
         color=self.jointsColorSlider.getHsvValue()
@@ -315,10 +380,12 @@ class RiggingTools(object):
         rename('ANKLE_RIGHT', 'ANKLERIGHT')
         rename('FOOT_RIGHT', 'FOOTRIGHT')
         # Add NECK
+        parent('SHOULDERRIGHT', 'SHOULDERLEFT', w=True)
         newJo=insertJoint('SPINESHOULDER')
         newJo=rename(newJo, 'NECK')
         pos=getAttr('HEAD.t')*.25
         joint(newJo, e=True, co=True, r=True, p=pos)
+        parent('SHOULDERRIGHT', 'SHOULDERLEFT', 'SPINESHOULDER')
         # Add HANDTIPLEFT
         newJo=insertJoint('HANDLEFT')
         newJo=rename(newJo, 'HANDTIPLEFT')
