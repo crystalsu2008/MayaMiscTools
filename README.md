@@ -2,7 +2,7 @@
 MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
 
 __Procedure Name__ : MayaMiscTools<br>
-__Update__ : July 25, 2016<br>
+__Update__ : July 26, 2016<br>
 __Author__ : Chris Su<br>
 __Contact__ : crystalsu2008@gmail.com<br>
 
@@ -19,11 +19,14 @@ This is a collection of few little tools for Rigging and Animation.
     -Quick change joints color, remove joints color and random set joints color.
     * -Show or hide joint's label.<br>
     -Show or hide joint's Local Rotation Axis.
-    * -Manager all joints pose in the scenes.<br>
+    * -Manager dagPoses in the scenes.<br>
     -Go to the pose or bindPose.<br>
-    -Remove invalid pose.<br>
+    -Create a new pose with selected objects.<br>
+    -Switch selected poses to bindPose or non-bindPose.<br>
+    -Adding the selected items to the dagPose. ```It's still some problems```<br>
+    -Remove the selected joints from the specified pose. ```It's still some problems```<br>
     -Reset the pose to current pose.<br>
-    -Rebind selected skin geometry at current pose, and keep the skin weights.
+    -Rebind selected skin geometry at current pose, and keep the skin weights.```Not Done```
     * -(Lock and Hide) or (Unlocked and Show) joint's transform attributes.
     * -Select joints at the root of hierarchy.<br>
     -Select joints at the end of hierarchy.

@@ -84,27 +84,56 @@ class RiggingTools(object):
                             self.queryPosesButton.setCommand(self.queryPoses)
                             with paneLayout(configuration='vertical3', w=330) as self.bindPosePane:
                                 self.posesList = textScrollList(ams=True)
-                                self.posesList.selectCommand(self.poseselcmd)
+                                self.posesList.selectCommand(self.poseSelectCmd)
+                                self.posesList.doubleClickCommand(self.poseDoubleClickCmd)
+                                self.posesList.deleteKeyCommand(self.poseDeleteCmd)
                                 self.skinsList = textScrollList(ams=True)
-                                self.skinsList.selectCommand(self.skinselcmd)
+                                self.skinsList.selectCommand(self.skinSelectCmd)
+                                self.skinsList.doubleClickCommand(self.skinDoubleClickCmd)
                                 self.geometriesList = textScrollList(ams=True)
-                                self.geometriesList.selectCommand(self.geometryselcmd)
-                            with formLayout(numberOfDivisions=100) as self.gotoPoseForm:
+                                self.geometriesList.selectCommand(self.geometrySelectCmd)
+
+                            with formLayout(numberOfDivisions=100) as self.scopeOfApplyForm:
+                                self.scopeOfApplyLable=text( label='Scope of Apply' )
+                                SAL=self.scopeOfApplyLable
+                                self.scopeOfApplyCollection = radioCollection()
+                                self.allHierarchy = radioButton('SOA_allHierarchy', label='All Hierarchy')
+                                SAAH=self.allHierarchy
+                                self.childernHierarchy = radioButton('SOA_childernHierarchy', label='Childern Hierarchy', sl=True)
+                                SACH=self.childernHierarchy
+                                self.onlySelected = radioButton('SOA_onlySelected', label='Only the Selected')
+                                SAOS=self.onlySelected
+                            formLayout(self.scopeOfApplyForm, e=True, af=[(SAL,'top',0), (SAL,'left',0), (SAAH,'top',0), (SACH,'top',0), (SAOS,'top',0), (SAOS,'right',0)],\
+                                                                      ap=[(SAL,'right',0,25), (SAAH,'left',0,25), (SAAH,'right',0,50), (SACH,'left',0,50), (SAAH,'right',0,75), (SAOS,'left',0,75)])
+
+                            with formLayout(numberOfDivisions=90) as self.gotoNewPoseForm:
                                 self.gotoSelectedPoseButton=button(l='Go to Pose', ann='Go to selected pose.', h=30)
                                 self.gotoSelectedPoseButton.setCommand(self.gotoSelectedPose)
                                 GSPB=self.gotoSelectedPoseButton
-                                self.removeInvalidPosesButton=button(l='[x] Invalid Poses', ann='Remove invalid poses.', h=30)
-                                self.removeInvalidPosesButton.setCommand(self.removeInvalidPoses)
-                                RIPB=self.removeInvalidPosesButton
-                            formLayout(self.gotoPoseForm, e=True, af=[(GSPB,'top',0), (GSPB,'left',0), (RIPB,'right',0), (RIPB,'top',0)], ap=[(GSPB,'right',0,50), (RIPB,'left',0,50)])
+                                self.newPoseButton=button(l='New Pose', ann='Create a new pose with selected objects.', h=30)
+                                self.newPoseButton.setCommand(self.newPose)
+                                NPB=self.newPoseButton
+                                self.switchBindPosesButton=button(l='Switch BindPoses', ann='Switch selected poses to bindPose or non-bindPose.', h=30)
+                                self.switchBindPosesButton.setCommand(self.switchBindPoses)
+                                SBPB=self.switchBindPosesButton
+                            formLayout(self.gotoNewPoseForm, e=True, af=[(GSPB,'top',0), (GSPB,'left',0), (NPB,'top',0), (SBPB,'top',0), (SBPB,'right',0)],\
+                                                                     ap=[(GSPB,'right',0,30), (NPB,'left',0,30), (NPB,'right',0,60), (SBPB,'left',0,60)])
+                            with formLayout(numberOfDivisions=100) as self.addRemoveToPoseForm:
+                                self.addToPoseButton=button(l='Add to Pose', ann='Adding the selected items to the dagPose.', h=30)
+                                self.addToPoseButton.setCommand(self.addToPose)
+                                ATPB=self.addToPoseButton
+                                self.removeFromPoseButton=button(l='Remove from Pose', ann='Remove the selected joints from the specified pose.', h=30)
+                                self.removeFromPoseButton.setCommand(self.removeFromPose)
+                                RFPB=self.removeFromPoseButton
+                            formLayout(self.addRemoveToPoseForm, e=True, af=[(ATPB,'top',0), (ATPB,'left',0), (RFPB,'right',0), (RFPB,'top',0)], ap=[(ATPB,'right',0,50), (RFPB,'left',0,50)])
                             with formLayout(numberOfDivisions=100) as self.resetPoseForm:
                                 self.resetPoseButton=button(l='Reset Pose', ann='Set current pose to selected pose.', h=30)
                                 self.resetPoseButton.setCommand(self.resetPose)
-                                RBPB=self.resetPoseButton
+                                REPB=self.resetPoseButton
                                 self.rebindSkinButton=button(l='Rebind Skin', ann='Rebind selected skin geometry at current pose, and keep the skin weights.', h=30)
-
+                                self.rebindSkinButton.setCommand(self.rebindSkin)
                                 RBSB=self.rebindSkinButton
-                            formLayout(self.resetPoseForm, e=True, af=[(RBPB,'top',0), (RBPB,'left',0), (RBSB,'right',0), (RBSB,'top',0)], ap=[(RBPB,'right',0,50), (RBSB,'left',0,50)])
+                            formLayout(self.resetPoseForm, e=True, af=[(REPB,'top',0), (REPB,'left',0), (RBSB,'right',0), (RBSB,'top',0)], ap=[(REPB,'right',0,50), (RBSB,'left',0,50)])
 
                     with frameLayout(bv=True,lv=True,label='Joint Lock and Hide',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointLockAndHideFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointLockAndHideFrame:
@@ -145,15 +174,83 @@ class RiggingTools(object):
             formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
+    def getHierarchy(self, objs):
+        #selObjs=ls(sl=True, objectsOnly=True, typ='transform')
+        hierObjs=objs[:]
+        if(len(objs)):
+            [hierObjs.append(y) for x in objs for y in listRelatives(x, ad=True, typ='transform') if not y in hierObjs]
+        return hierObjs
+
+    def getItemsForApply(self, objType=''):
+        items=ls(sl=True, objectsOnly=True, typ=objType)
+        scope=self.scopeOfApplyCollection.getSelect()
+        if scope=='SOA_allHierarchy':
+            items=self.getHierarchy( self.findAllRoots(objs=items, objtype=objType, no_selected_return_all=False) )
+        elif scope=='SOA_childernHierarchy':
+            items=self.getHierarchy(items)
+        return items
+
+    # Finding out given object's root.
+    def findRoot(self, obj, objtype=''):
+        pa=listRelatives(obj, parent=True, typ=objtype)
+        return self.findRoot(obj=pa[0], objtype=objtype) if len(pa) else obj
+
+    # If there have some selected objects then return all selected object's roots otherwise return all roots.
+    def findAllRoots(self, objs, objtype='', no_selected_return_all=True):
+        roots=[]
+        if(len(objs)):
+            [roots.append(self.findRoot(obj=x, objtype=objtype)) for x in objs if not x in roots]
+        elif no_selected_return_all:
+            roots=[x for x in ls(objectsOnly=True, typ=objtype) if not len(listRelatives(x, parent=True, typ=objtype))]
+        return roots
+
+    def rebindSkin(self, val):
+        pass
+
+    def addToPose(self, val):
+        objs=self.getItemsForApply(objType='transform')
+        if not len(objs):
+            print 'Hierarchy Objects must be selected.'
+        else:
+            select(objs)
+            [dagPose(name=self.list_poses[i-1], addToPose=True, selection=True) for i in self.posesList.getSelectIndexedItem()]
+
+    def removeFromPose(self, val):
+        objs=self.getItemsForApply(objType='transform')
+        if not len(objs):
+            print 'Hierarchy Objects must be selected.'
+        else:
+            [dagPose(objs, name=self.list_poses[i-1], remove=True) for i in self.posesList.getSelectIndexedItem()]
+
+    def newPose(self, val):
+        self.queryPoses(val)
+        nodes=self.getItemsForApply(objType='transform')
+        if not len(nodes):
+            print 'Hierarchy Objects must be selected.'
+        else:
+            newPose=dagPose(nodes, save=True, selection=True)
+            self.list_poses.append(newPose)
+            bp='<BP>' if getAttr(newPose+'.bindPose') else ''
+            skin='<Skin>' if len(listConnections((newPose+'.message'), type='skinCluster')) else ''
+            self.posesList.append(newPose+bp+skin)
+            self.posesList.setSelectIndexedItem(len(self.list_poses))
+            self.poseSelectCmd()
+
+    def switchBindPoses(self, val):
+        ids=[i for i in self.posesList.getSelectIndexedItem()]
+        poses=[self.list_poses[i-1] for i in ids]
+        isbp=True
+        for x in poses:
+            isbp=not getAttr(x+'.bindPose')
+            setAttr((x+'.bindPose'), isbp)
+        self.queryPoses(val)
+        self.posesList.setSelectIndexedItem(ids)
+        self.poseSelectCmd()
+
     def resetPose(self, val):
         poses=[self.list_poses[i-1] for i in self.posesList.getSelectIndexedItem()]
         for x in poses:
             dagPose(dagPose(x, query=True, members=True), x, reset=True)
-
-    def removeInvalidPoses(self, val):
-        invalidPoses=[x for x in ls(type='dagPose') if not len(listConnections((x+'.message'), type='skinCluster'))]
-        delete(invalidPoses)
-        self.queryPoses(val)
 
     def gotoSelectedPose(self, val):
         [dagPose(self.list_poses[i-1], restore=True) for i in self.posesList.getSelectIndexedItem()]
@@ -168,17 +265,36 @@ class RiggingTools(object):
         cmds.dagPose([''],addToPose=True, name='bindPose3')
         '''
 
-    def poseselcmd(self):
+    def poseSelectCmd(self):
+        # Clean all self list.
         self.list_skins=[]
         self.skinsList.removeAll()
         self.list_geometries=[]
         self.geometriesList.removeAll()
-        selectedItemPoses=[]
-        [selectedItemPoses.append(self.list_poses[i-1]) for i in self.posesList.getSelectIndexedItem()]
-        [self.list_skins.extend(listConnections((x+'.message'), type='skinCluster')) for x in selectedItemPoses]
+        poseMembers=[]
+        members=[]
+        # Get selected poses.
+        selectedItemPoses=[self.list_poses[i-1] for i in self.posesList.getSelectIndexedItem()]
+        # Get Skinclusters and poses's members.
+        for x in selectedItemPoses:
+            self.list_skins.extend(listConnections((x+'.message'), type='skinCluster'))
+            members=dagPose(x, query=True, members=True)
+            if members:
+                poseMembers.extend(members)
+        # Refresh skinList.
         [self.skinsList.append(x) for x in self.list_skins]
+        select(poseMembers)
 
-    def skinselcmd(self):
+    def poseDoubleClickCmd(self):
+        selectedItemPoses=[self.list_poses[i-1] for i in self.posesList.getSelectIndexedItem()]
+        select(selectedItemPoses)
+
+    def poseDeleteCmd(self):
+        selectedItemPoses=[self.list_poses[i-1] for i in self.posesList.getSelectIndexedItem()]
+        delete(selectedItemPoses)
+        self.queryPoses(False)
+
+    def skinSelectCmd(self):
         self.list_geometries=[]
         self.geometriesList.removeAll()
         selectedItemSkins=[]
@@ -186,7 +302,11 @@ class RiggingTools(object):
         [self.list_geometries.extend(listConnections((x+'.outputGeometry'))) for x in selectedItemSkins]
         [self.geometriesList.append(x) for x in self.list_geometries]
 
-    def geometryselcmd(self):
+    def skinDoubleClickCmd(self):
+        selectedItemSkins=[self.list_skins[i-1] for i in self.skinsList.getSelectIndexedItem()]
+        select(selectedItemSkins)
+
+    def geometrySelectCmd(self):
         selectedItemGeometry=[self.list_geometries[i-1] for i in self.geometriesList.getSelectIndexedItem()]
         #[selectedItemGeometry.append(self.list_geometries[i-1]) for i in self.geometriesList.getSelectIndexedItem()]
         select(selectedItemGeometry)
@@ -199,13 +319,13 @@ class RiggingTools(object):
         self.list_geometries=[]
         self.geometriesList.removeAll()
         bp=''
-        inv=''
+        skin=''
         #for x in dagPose(self.getJoints(), query=True, bindPose=True):
         for x in ls(type='dagPose'):
             self.list_poses.append(x)
             bp='<BP>' if getAttr(x+'.bindPose') else ''
-            inv='<IN>' if not len(listConnections((x+'.message'), type='skinCluster')) else ''
-            self.posesList.append(x+bp+inv)
+            skin='<Skin>' if len(listConnections((x+'.message'), type='skinCluster')) else ''
+            self.posesList.append(x+bp+skin)
 
     def removeInvalidIntermediate(self, val):
         allShapes=listRelatives(children=True, shapes=True)
@@ -254,24 +374,9 @@ class RiggingTools(object):
             setAttr((x+'.useObjectColor'), 2)
             setAttr((x+'.wireColorRGB'), color)
 
-    # Finding out given joint's root joint.
-    def findRootJoint(self, jo):
-        pa=listRelatives(jo, parent=True, typ='joint')
-        return self.findRootJoint(jo=pa[0]) if len(pa) else jo
-
-    # If there have some selected joints then return all selected joint's root joints otherwise return all root joints.
-    def findAllRootJoints(self):
-        seljoints=ls(sl=True, typ='joint')
-        joints=[]
-        if(len(seljoints)):
-            [joints.append(self.findRootJoint(jo=x)) for x in seljoints if not x in joints]
-        else:
-            joints=[x for x in ls(typ='joint') if not len(listRelatives(x, parent=True, typ='joint'))]
-        return joints
-
     # Select joints at the root of hierarchy.
     def selectRootJoints(self, val):
-        select(self.findAllRootJoints())
+        select(self.findAllRoots(ls(sl=True, objectsOnly=True, typ='joint'), objtype='joint'))
 
     # Select joints at the end of hierarchy.
     def selectEndJoints(self, val):
