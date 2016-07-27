@@ -18,10 +18,10 @@ class RiggingTools(object):
             setParent(parentLayout)
         else:
             self.win=window('RiggingTools',t=self.label,w=400)
-        with frameLayout(bv=False,lv=False,label=self.label) as self.frame:
-            with formLayout(numberOfDivisions=100) as self.form:
-                with columnLayout(cat=('both', 0), rs=0, adj=True) as self.clumn:
-
+        with frameLayout(bv=False, lv=False, label=self.label, width=400) as self.frame:
+            with scrollLayout(childResizable=True, width=400, minChildWidth=400) as self.scroll:
+            #with formLayout(numberOfDivisions=100, width=400) as self.form:
+                with columnLayout(columnAttach=('both', 0), rowSpacing=0, width=400, columnWidth=400, adjustableColumn=True) as self.clumn:
                     with frameLayout(bv=True,lv=True,label='Joint Size & Color',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointSizeFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointSizeClumn:
                             self.jointSizeSlider=floatSliderGrp(cw=[1,60], label='Joint Size', field=True, minValue=0.01, maxValue=10.0, fieldMinValue=0.01, fieldMaxValue=100.0, precision=2, value=1)
@@ -55,7 +55,6 @@ class RiggingTools(object):
                                 self.cleanJointColorButton.setCommand(self.cleanJointColor)
                                 CJCB=self.cleanJointColorButton
                             formLayout(self.randomColorForm, e=True, af=[(RJCB,'top',0), (RJCB,'left',0), (CJCB,'right',0), (CJCB,'top',0)], ap=[(RJCB,'right',0,50), (CJCB,'left',0,50)])
-
                     with frameLayout(bv=True,lv=True,label='Joint Info',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointInfoFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointInfoClumn:
                             self.setJointLabelToNameButton=button(l='Label = Name', ann='Set Joint\'s Label to Joint\'s Name', h=30)
@@ -77,12 +76,11 @@ class RiggingTools(object):
                                 self.hideJointAxisButton.setCommand(self.jointsAxisInvisible)
                                 HJAB=self.hideJointAxisButton
                             formLayout(self.showJointAxisForm, e=True, af=[(SJAB,'top',0), (SJAB,'left',0), (HJAB,'right',0), (HJAB,'top',0)], ap=[(SJAB,'right',0,50), (HJAB,'left',0,50)])
-
                     with frameLayout(bv=True,lv=True,label='Bind Pose',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.bindPoseFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.bindPoseClumn:
                             self.queryPosesButton=button(l='Query Poses', ann='Finding out the poses connect to the joints.', h=30)
                             self.queryPosesButton.setCommand(self.queryPoses)
-                            with paneLayout(configuration='vertical3', w=330) as self.bindPosePane:
+                            with paneLayout(configuration='vertical3', w=150) as self.bindPosePane:
                                 self.posesList = textScrollList(ams=True)
                                 self.posesList.selectCommand(self.poseSelectCmd)
                                 self.posesList.doubleClickCommand(self.poseDoubleClickCmd)
@@ -92,7 +90,6 @@ class RiggingTools(object):
                                 self.skinsList.doubleClickCommand(self.skinDoubleClickCmd)
                                 self.geometriesList = textScrollList(ams=True)
                                 self.geometriesList.selectCommand(self.geometrySelectCmd)
-
                             with formLayout(numberOfDivisions=100) as self.scopeOfApplyForm:
                                 self.scopeOfApplyLable=text( label='Scope of Apply' )
                                 SAL=self.scopeOfApplyLable
@@ -105,7 +102,6 @@ class RiggingTools(object):
                                 SAOS=self.onlySelected
                             formLayout(self.scopeOfApplyForm, e=True, af=[(SAL,'top',0), (SAL,'left',0), (SAAH,'top',0), (SACH,'top',0), (SAOS,'top',0), (SAOS,'right',0)],\
                                                                       ap=[(SAL,'right',0,25), (SAAH,'left',0,25), (SAAH,'right',0,50), (SACH,'left',0,50), (SAAH,'right',0,75), (SAOS,'left',0,75)])
-
                             with formLayout(numberOfDivisions=90) as self.gotoNewPoseForm:
                                 self.gotoSelectedPoseButton=button(l='Go to Pose', ann='Go to selected pose.', h=30)
                                 self.gotoSelectedPoseButton.setCommand(self.gotoSelectedPose)
@@ -134,7 +130,6 @@ class RiggingTools(object):
                                 self.rebindSkinButton.setCommand(self.rebindSkin)
                                 RBSB=self.rebindSkinButton
                             formLayout(self.resetPoseForm, e=True, af=[(REPB,'top',0), (REPB,'left',0), (RBSB,'right',0), (RBSB,'top',0)], ap=[(REPB,'right',0,50), (RBSB,'left',0,50)])
-
                     with frameLayout(bv=True,lv=True,label='Joint Lock and Hide',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointLockAndHideFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.jointLockAndHideFrame:
                             self.lockAndHideCheck=checkBoxGrp(cw=[1,150], numberOfCheckBoxes=3, label='Select Attributes to Apply', labelArray3=['Translate', 'Rotate', 'Scale'], v1=True, v2=True, v3=True)
@@ -146,7 +141,6 @@ class RiggingTools(object):
                                 self.lockAndHideButton.setCommand(self.lockAndHideJointsAttr)
                                 LHB=self.lockAndHideButton
                             formLayout(self.lockAndHideForm, e=True, af=[(USB,'top',0), (USB,'left',0), (LHB,'right',0), (LHB,'top',0)], ap=[(USB,'right',0,50), (LHB,'left',0,50)])
-
                     with frameLayout(bv=True,lv=True,label='Pick Out Joints',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.pickOutJointsFrame:
                         with columnLayout(cat=('both', 0), rs=0, adj=True) as self.pickOutJointsClumn:
                             with formLayout(numberOfDivisions=100) as self.pickOutJointsForm:
@@ -157,7 +151,6 @@ class RiggingTools(object):
                                 self.selectEndJointsButton.setCommand(self.selectEndJoints)
                                 SEJB=self.selectEndJointsButton
                             formLayout(self.pickOutJointsForm, e=True, af=[(SRJB,'top',0), (SRJB,'left',0), (SEJB,'right',0), (SEJB,'top',0)], ap=[(SRJB,'right',0,50), (SEJB,'left',0,50)])
-
                     with frameLayout(bv=True,lv=True,label='Other Rigging Tools',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.otherRigToolFrame:
                         with gridLayout(cellWidthHeight=(110, 30), columnsResizable=True) as self.otherRigToolGrid:
                             self.jointOrientZeroButton=button(l='Orient = 0', ann='Set Joint Orient to Zero')
@@ -170,12 +163,44 @@ class RiggingTools(object):
                             self.showIntermediateButton.setCommand(self.showIntermediate)
                             self.swithIntermediateButton=button(l='-><- Intermediate', ann='Quick switch between the Final objects and the Origin Intermediate objects. It\'s very useful to do some modify before the Construction History.')
                             self.swithIntermediateButton.setCommand(self.swithIntermediate)
-
-            formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
+            #formLayout(self.form, e=True, af=[(self.clumn,'top',0), (self.clumn,'left',0), (self.clumn,'right',0), (self.clumn,'bottom',0)])
         self.embed=self.frame #This attribute is used to embed in MayaMiscTools's Layout.
 
+    def openUI(self):
+        if window('RiggingTools', q=True, ex=True):
+            deleteUI('RiggingTools', wnd=True)
+        self.initUI()
+        showWindow(self.win)
+
+    def rebindSkin(self, val):
+        validSkinShapes=[]
+        skinClusters={}
+        bindPoses=[]
+        for x in ls(sl=True, objectsOnly=True):
+            for y in listRelatives(x, ad=True, noIntermediate=True):
+                thisSkinCluster=listConnections((y+'.inMesh'), type='skinCluster')
+                if thisSkinCluster:
+                    validSkinShapes.append(y)
+                    skinClusters[y]=thisSkinCluster
+        originalObjects=ls(allPaths=True, dag=True)
+        for x in validSkinShapes:
+            dupShapes=listRelatives(duplicate(x, upstreamNodes=True, renameChildren=True), ad=True, noIntermediate=True)[0]
+            currentObjects=ls(allPaths=True, dag=True)
+            duplicatedObjects=list(set(currentObjects)-set(originalObjects))
+            joints=[]
+            [joints.extend(listConnections(y+'.matrix')) for y in skinClusters[x]]
+            bindSkin(x, unlock=True)
+            delete( x, constructionHistory=True )
+            delete( dagPose(joints, query=True, bindPose=True) )
+            select(joints, x, replace=True)
+            mel.eval('SmoothBindSkin')
+            select(dupShapes, x, replace=True)
+            copySkinWeights(normalize=True, noMirror=True, surfaceAssociation='closestPoint', influenceAssociation='closestJoint')
+            for z in duplicatedObjects:
+                if objExists(z):
+                    delete(z)
+
     def getHierarchy(self, objs):
-        #selObjs=ls(sl=True, objectsOnly=True, typ='transform')
         hierObjs=objs[:]
         if(len(objs)):
             [hierObjs.append(y) for x in objs for y in listRelatives(x, ad=True, typ='transform') if not y in hierObjs]
@@ -203,9 +228,6 @@ class RiggingTools(object):
         elif no_selected_return_all:
             roots=[x for x in ls(objectsOnly=True, typ=objtype) if not len(listRelatives(x, parent=True, typ=objtype))]
         return roots
-
-    def rebindSkin(self, val):
-        pass
 
     def addToPose(self, val):
         objs=self.getItemsForApply(objType='transform')
@@ -308,7 +330,6 @@ class RiggingTools(object):
 
     def geometrySelectCmd(self):
         selectedItemGeometry=[self.list_geometries[i-1] for i in self.geometriesList.getSelectIndexedItem()]
-        #[selectedItemGeometry.append(self.list_geometries[i-1]) for i in self.geometriesList.getSelectIndexedItem()]
         select(selectedItemGeometry)
 
     def queryPoses(self, val):
@@ -320,7 +341,6 @@ class RiggingTools(object):
         self.geometriesList.removeAll()
         bp=''
         skin=''
-        #for x in dagPose(self.getJoints(), query=True, bindPose=True):
         for x in ls(type='dagPose'):
             self.list_poses.append(x)
             bp='<BP>' if getAttr(x+'.bindPose') else ''
@@ -455,19 +475,13 @@ class RiggingTools(object):
             joints=ls(typ='joint')
         return joints
 
-    def openUI(self):
-        if window('RiggingTools', q=True, ex=True):
-            deleteUI('RiggingTools', wnd=True)
-        self.initUI()
-        showWindow(self.win)
-
     # Convert Kinect1 Skeleton System to Kinect2
     def kinect1to2(self, val):
         bindPoses=dagPose('HIP_CENTER', q=True, bindPose=True)
         # Rename kinect1 joints name to kinect2
         rename('HIP_CENTER', 'SPINEBASE')
         rename('SPINE', 'SPINEMID')
-        rename('SHOULDER_CENTER', 'SPINESHOULDER')
+        #rename('SHOULDER_CENTER', 'SPINESHOULDER')
         rename('SHOULDER_LEFT', 'SHOULDERLEFT')
         rename('ELBOW_LEFT', 'ELBOWLEFT')
         rename('WRIST_LEFT', 'WRISTLEFT')
@@ -485,10 +499,11 @@ class RiggingTools(object):
         rename('ANKLE_RIGHT', 'ANKLERIGHT')
         rename('FOOT_RIGHT', 'FOOTRIGHT')
         # Add NECK
+        rename('SHOULDER_CENTER', 'NECK')
         parent('SHOULDERRIGHT', 'SHOULDERLEFT', w=True)
-        newJo=insertJoint('SPINESHOULDER')
-        newJo=rename(newJo, 'NECK')
-        pos=getAttr('HEAD.t')*.25
+        newJo=insertJoint('SPINEMID')
+        newJo=rename(newJo, 'SPINESHOULDER')
+        pos=getAttr('NECK.t')*.5
         joint(newJo, e=True, co=True, r=True, p=pos)
         parent('SHOULDERRIGHT', 'SHOULDERLEFT', 'SPINESHOULDER')
         # Add HANDTIPLEFT

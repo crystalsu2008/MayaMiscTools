@@ -2,7 +2,7 @@
 MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
 
 __Procedure Name__ : MayaMiscTools<br>
-__Update__ : July 26, 2016<br>
+__Update__ : July 27, 2016<br>
 __Author__ : Chris Su<br>
 __Contact__ : crystalsu2008@gmail.com<br>
 
@@ -26,7 +26,7 @@ This is a collection of few little tools for Rigging and Animation.
     -Adding the selected items to the dagPose. ```It's still some problems```<br>
     -Remove the selected joints from the specified pose. ```It's still some problems```<br>
     -Reset the pose to current pose.<br>
-    -Rebind selected skin geometry at current pose, and keep the skin weights.```Not Done```
+    -Rebind selected skin geometry at current pose, and keep the skin weights.
     * -(Lock and Hide) or (Unlocked and Show) joint's transform attributes.
     * -Select joints at the root of hierarchy.<br>
     -Select joints at the end of hierarchy.
