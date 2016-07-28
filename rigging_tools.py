@@ -127,7 +127,7 @@ class RiggingTools(object):
                                 self.resetPoseButton.setCommand(self.resetPose)
                                 REPB=self.resetPoseButton
                                 self.rebindSkinButton=button(l='Rebind Skin', ann='Rebind selected skin geometry at current pose, and keep the skin weights.', h=30)
-                                self.rebindSkinButton.setCommand(self.rebindSkin)
+                                self.rebindSkinButton.setCommand(self.rebindSkinCmd)
                                 RBSB=self.rebindSkinButton
                             formLayout(self.resetPoseForm, e=True, af=[(REPB,'top',0), (REPB,'left',0), (RBSB,'right',0), (RBSB,'top',0)], ap=[(REPB,'right',0,50), (RBSB,'left',0,50)])
                     with frameLayout(bv=True,lv=True,label='Joint Lock and Hide',cll=False, bgc=[0.0,0.35,0.0], fn='smallObliqueLabelFont') as self.jointLockAndHideFrame:
@@ -172,33 +172,50 @@ class RiggingTools(object):
         self.initUI()
         showWindow(self.win)
 
-    def rebindSkin(self, val):
-        validSkinShapes=[]
-        skinClusters={}
-        bindPoses=[]
-        for x in ls(sl=True, objectsOnly=True):
-            for y in listRelatives(x, ad=True, noIntermediate=True):
-                thisSkinCluster=listConnections((y+'.inMesh'), type='skinCluster')
-                if thisSkinCluster:
-                    validSkinShapes.append(y)
-                    skinClusters[y]=thisSkinCluster
+    def rebindSkin(self, skinCluster):
+        # Get joints
+        joints=listConnections(skinCluster+'.matrix')
+        # Get skin objects
+        skinObjs=listConnections(skinCluster+'.outputGeometry')
+
+        # Get origin objects list in the scenes
         originalObjects=ls(allPaths=True, dag=True)
-        for x in validSkinShapes:
-            dupShapes=listRelatives(duplicate(x, upstreamNodes=True, renameChildren=True), ad=True, noIntermediate=True)[0]
-            currentObjects=ls(allPaths=True, dag=True)
-            duplicatedObjects=list(set(currentObjects)-set(originalObjects))
-            joints=[]
-            [joints.extend(listConnections(y+'.matrix')) for y in skinClusters[x]]
-            bindSkin(x, unlock=True)
-            delete( x, constructionHistory=True )
-            delete( dagPose(joints, query=True, bindPose=True) )
-            select(joints, x, replace=True)
-            mel.eval('SmoothBindSkin')
-            select(dupShapes, x, replace=True)
+        # Duplicate skins
+        dupObjects=duplicate(skinObjs, upstreamNodes=True, renameChildren=True)
+        dupShapes=listRelatives(dupObjects, ad=True, noIntermediate=True)
+        skinWeightCopy=dict([(x,y) for x in skinObjs for y in dupObjects])
+        # Get current objects list and duplicate objects
+        currentObjects=ls(allPaths=True, dag=True)
+        duplicatedObjects=list(set(currentObjects)-set(originalObjects))
+
+        # Delete bindPose
+        delete( listConnections(skinCluster+'.bindPose') )
+        # Unbind Skins
+        bindSkin(skinObjs, unlock=True)
+        delete(skinObjs, constructionHistory=True)
+        # Rebind Skins
+        select(joints, skinObjs, replace=True)
+        mel.eval('SmoothBindSkin')
+
+        # Copy skin weights
+        for skinObj in skinObjs:
+            select(skinWeightCopy[skinObj], skinObj, replace=True)
             copySkinWeights(normalize=True, noMirror=True, surfaceAssociation='closestPoint', influenceAssociation='closestJoint')
-            for z in duplicatedObjects:
-                if objExists(z):
-                    delete(z)
+        # Delete duplicate objects
+        for dupObj in duplicatedObjects:
+            if objExists(dupObj):
+                delete(dupObj)
+
+    def rebindSkinCmd(self, val):
+        # Get selected object's skinClusters
+        skinClusters=[]
+        for obj in ls(sl=True, objectsOnly=True, dagObjects=True, geometry=True, noIntermediate=True):
+            cluster=listConnections((obj+'.inMesh'), type='skinCluster')[0]
+            if cluster:
+                skinClusters.append(cluster)
+        # Rebind skins
+        for cluster in skinClusters:
+            self.rebindSkin(skinCluster=cluster)
 
     def getHierarchy(self, objs):
         hierObjs=objs[:]
