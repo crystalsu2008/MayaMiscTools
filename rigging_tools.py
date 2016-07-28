@@ -550,4 +550,5 @@ class RiggingTools(object):
         # Add all joints to bindPose
         K2Joints=['SPINEBASE', 'SPINEMID', 'SPINESHOULDER', 'NECK', 'HEAD', 'SHOULDERLEFT', 'ELBOWLEFT', 'WRISTLEFT', 'HANDLEFT', 'HANDTIPLEFT', 'THUMBLEFT', 'SHOULDERRIGHT',\
         'ELBOWRIGHT', 'WRISTRIGHT', 'HANDRIGHT', 'HANDTIPRIGHT', 'THUMBRIGHT', 'HIPLEFT', 'KNEELEFT', 'ANKLELEFT', 'FOOTLEFT', 'HIPRIGHT', 'KNEERIGHT', 'ANKLERIGHT', 'FOOTRIGHT']
-        dagPose(K2Joints, addToPose=True, name=bindPoses[0])
+        if bindPoses:
+            dagPose(K2Joints, addToPose=True, name=bindPoses[0])
