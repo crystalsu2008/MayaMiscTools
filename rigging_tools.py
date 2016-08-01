@@ -126,7 +126,7 @@ class RiggingTools(object):
                                 self.resetPoseButton=button(l='Reset Pose', ann='Set current pose to selected pose.', h=30)
                                 self.resetPoseButton.setCommand(self.resetPose)
                                 REPB=self.resetPoseButton
-                                self.rebindSkinButton=button(l='Rebind Skin', ann='Rebind selected skin geometry at current pose, and keep the skin weights.', h=30)
+                                self.rebindSkinButton=button(l='Rebind Skin', ann='Rebind selected skin geometry at current pose, and keep the skin weights. This function will cause the rebind object\'s pivot set to origin and freeze transformations and parent to new group together.', h=30)
                                 self.rebindSkinButton.setCommand(self.rebindSkinCmd)
                                 RBSB=self.rebindSkinButton
                             formLayout(self.resetPoseForm, e=True, af=[(REPB,'top',0), (REPB,'left',0), (RBSB,'right',0), (RBSB,'top',0)], ap=[(REPB,'right',0,50), (RBSB,'left',0,50)])
@@ -187,12 +187,34 @@ class RiggingTools(object):
         # Get current objects list and duplicate objects
         currentObjects=ls(allPaths=True, dag=True)
         duplicatedObjects=list(set(currentObjects)-set(originalObjects))
+        cmds.select( clear=True )
 
         # Delete bindPose
         delete( listConnections(skinCluster+'.bindPose') )
         # Unbind Skins
         bindSkin(skinObjs, unlock=True)
         delete(skinObjs, constructionHistory=True)
+
+        # Parent skinObjs to World.
+        parent(skinObjs, w=True)
+        # Set skinObj's scalePivot rotatePivot to origin.
+        pivots=[]
+        [pivots.extend( [(x+'.scalePivot'), (x+'.rotatePivot')] ) for x in skinObjs]
+        move(0, 0, 0, pivots, absolute=True, worldSpace=True, rotatePivotRelative=True)
+        # Freeze skinObjs transformations.
+        makeIdentity(skinObjs, apply=True, t=True, r=True, s=True, n=False, pn=True)
+        '''
+        # Get skinObj's all hierarchy parent
+        hierparent=[]
+        [hierparent.extend(self.listParents(hier=[x], objtype='transform')) for x in skinObjs]
+        # set scalePivot rotatePivot to origin
+        pivots=[]
+        [pivots.extend( [(x+'.scalePivot'), (x+'.rotatePivot')] ) for x in hierparent]
+        move(0, 0, 0, pivots, absolute=True, worldSpace=True, rotatePivotRelative=True)
+        # makeIdentity
+        makeIdentity(hierparent, apply=True, t=True, r=True, s=True, n=False, pn=True)
+        '''
+
         # Rebind Skins
         select(joints, skinObjs, replace=True)
         mel.eval('SmoothBindSkin')
@@ -205,6 +227,15 @@ class RiggingTools(object):
         for dupObj in duplicatedObjects:
             if objExists(dupObj):
                 delete(dupObj)
+        return skinObjs
+
+    # Return given object's all parents list.
+    def listParents(self, hier=[], objtype='dagNode'):
+        pa=listRelatives(hier[len(hier)-1], parent=True, children=False, typ=objtype)
+        if len(pa):
+            hier.append(pa[0])
+            hier=self.listParents(hier=hier, objtype=objtype)
+        return hier
 
     def rebindSkinCmd(self, val):
         # Get selected object's skinClusters
@@ -214,8 +245,11 @@ class RiggingTools(object):
             if cluster:
                 skinClusters.append(cluster)
         # Rebind skins
+        reskinObjs=[]
         for cluster in skinClusters:
-            self.rebindSkin(skinCluster=cluster)
+            reskinObjs.extend( self.rebindSkin(skinCluster=cluster) )
+        group(reskinObjs, n='Reskin_Group')
+        select(reskinObjs, replace=True)
 
     def getHierarchy(self, objs):
         hierObjs=objs[:]
@@ -233,12 +267,12 @@ class RiggingTools(object):
         return items
 
     # Finding out given object's root.
-    def findRoot(self, obj, objtype=''):
+    def findRoot(self, obj, objtype='dagNode'):
         pa=listRelatives(obj, parent=True, typ=objtype)
         return self.findRoot(obj=pa[0], objtype=objtype) if len(pa) else obj
 
     # If there have some selected objects then return all selected object's roots otherwise return all roots.
-    def findAllRoots(self, objs, objtype='', no_selected_return_all=True):
+    def findAllRoots(self, objs, objtype='dagNode', no_selected_return_all=True):
         roots=[]
         if(len(objs)):
             [roots.append(self.findRoot(obj=x, objtype=objtype)) for x in objs if not x in roots]
