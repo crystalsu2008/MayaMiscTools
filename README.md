@@ -1,5 +1,5 @@
 # MayaMiscTools
-MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
+&emsp;MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
 
 __Procedure Name__ : MayaMiscTools<br>
 __Update__ : August 1, 2016<br>
@@ -10,7 +10,7 @@ __Contact__ : crystalsu2008@gmail.com<br>
 * v0.0
 
 ## How to use:
-Put all scripts in a folder. It's recommended to place this folder in your Maya scripts folder, but it can be anywhere. Once you have the MayaMiscTools folder where you want it to be, then just drag and drop the "install.mel" file into Maya (drop in any viewport). This will add MayaMiscTools tool to the current shelf.<br>
+&emsp;Put all scripts in a folder. It's recommended to place this folder in your Maya scripts folder, but it can be anywhere. Once you have the MayaMiscTools folder where you want it to be, then just drag and drop the "install.mel" file into Maya (drop in any viewport). This will add MayaMiscTools tool to the current shelf.<br>
 
 ## Functions:
 * Rigging Tools<br>
