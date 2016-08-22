@@ -172,6 +172,27 @@ class RiggingTools(object):
         self.initUI()
         showWindow(self.win)
 
+    def matchConstraint(self, origin, originPrefix="", targetPrefix=""):
+        # Define a pattern to match origin and target.
+        matchKey={}
+        if not originPrefix=="":
+            for x in origin:
+                part = x.partition(originPrefix)
+                matchKey[x] = targetPrefix + part[0] + part[2]
+
+        # Constraint the matching objects.
+        for obj in origin:
+            print(obj, matchKey[obj])
+            cmds.orientConstraint( str(obj), matchKey[obj], maintainOffset=True )
+            if not len(listRelatives(obj, parent=True, typ='joint')):
+                cmds.pointConstraint( str(obj), matchKey[obj], maintainOffset=True )
+
+    #mmt.rts.RiggingTools().animTransfer()
+    def animTransfer(self):
+        originObjs = ls(sl=True, tr=True)
+        if len(originObjs):
+            self.matchConstraint(origin=originObjs, originPrefix='mk_')
+
     def rebindSkin(self, skinCluster):
         # Get joints
         joints=listConnections(skinCluster+'.matrix')
