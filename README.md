@@ -1,5 +1,5 @@
 # MayaMiscTools
-&emsp;MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
+&emsp;```This is a practice for my Maya Python coding study.``` MayaMiscTools is a collection of some miscellaneous tools and scripts for Autodesk Maya. It's written in Python or MEL.
 
 __Procedure Name__ : MayaMiscTools<br>
 __Update__ : August 1, 2016<br>
