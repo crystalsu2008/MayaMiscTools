@@ -10,6 +10,7 @@ Advanced2Kinect.create()
 '''
 
 import pymel.core as pm
+import maya.mel as mel
 
 a2k = None
 
@@ -75,7 +76,20 @@ class Advanced2Kinect(object):
               'ANKLERIGHT': ['Ankle_R', 'Toes_R'],
                'FOOTRIGHT': None}
 
-    def create(self):
+    asSkins, k2Skins = [None], [None]
+
+    SmoothBindOptions = {'multipleBindPosesOpt': 1,
+                        'bindMethod': 1,
+                        'bindTo': 0,
+                        'skinMethod': 1,
+                        'removeUnusedInfluences': 0,
+                        'colorizeSkeleton': 0,
+                        'maxInfl': 3,
+                        'normalizeWeights': 2,
+                        'obeyMaxInfl': 0}
+
+
+    def k2create(self):
         #
         # Create Kinect2 Joints
         #
@@ -136,14 +150,90 @@ class Advanced2Kinect(object):
             pm.connectAttr( (kjot+'intermediate.r'), (kjot+'.r') )
             pm.connectAttr( (kjot+'intermediate.t'), (kjot+'.t') )
 
-        rootGrp = pm.group( 'SPINEBASE', n='K2Skeleton_Root', w=True, em=True)
+        # Create 'Kinect2' joint root curve handle.
+        xpos = pm.xform('HANDTIPLEFT', q=True, t=True, ws=True)
+        ypos = pm.xform('HEAD', q=True, t=True, ws=True)
+        zpos = pm.xform('SPINEBASE', q=True, t=True, ws=True)
+        textCurveGrp = pm.textCurves( f='Courier', t='Kinect2', ch=False)
+        bbox = pm.exactWorldBoundingBox(textCurveGrp)
+        pm.xform(textCurveGrp, t=(xpos[0], ypos[1], zpos[2]), ro=(0,0,-90), s=(ypos[1]/3/bbox[3],ypos[1]/3/bbox[3],ypos[1]/3/bbox[3]))
+        rootCurvesShape = pm.listRelatives(textCurveGrp, ad=True, s=True)
+        rootCurves = pm.parent(rootCurvesShape, w=True)
+        pm.makeIdentity(rootCurves, apply=True, t=1, r=1, s=1, n=0, pn=1)
+
+        # Create 'Kinect2' joint root.
+        rootGrp = pm.group( 'SPINEBASE', n='K2Skeleton', w=True, em=True)
+        pm.parent( rootCurvesShape, rootGrp, s=True, add=True)
+        pm.delete( textCurveGrp, rootCurves )
         pm.parent( 'SPINEBASE', rootGrp )
+
+        # Move intermediate joint to Advanced Skeleton Group.
+        asGroup = pm.listRelatives(pm.listRelatives(pm.ls('MainShape', typ='nurbsCurve'), p=True), p=True)
+        pm.parent( 'SPINEBASEintermediate', asGroup)
         pm.setAttr( 'SPINEBASEintermediate.visibility', False )
         return
 
-    def copySkinWeights(self, fromCluster=None, toCluster=None):
+    def copySkinWeights(self):
+        if not self.asSkins[0] or not self.k2Skins[0]:
+            pm.error("At least given a source skined object and a destination object.")
+        else:
+            for fromSkin, toSkin in zip(self.asSkins, self.k2Skins):
+                pm.select(fromSkin, toSkin, replace=True)
+                pm.copySkinWeights(nm=True, sa='closestPoint', ia='closestJoint', nr=True)
+                #pm.copySkinWeights(ss=fromSkin, ds=toSkin, nm=True, sa='closestPoint', ia='closestJoint', nr=True)
+
+    def duplicateSkinObjects(self):
+        fromClusters=[]
+        for joint in pm.listRelatives('DeformationSystem', ad=True, typ='joint'):
+            clusters = pm.listConnections(joint+'.worldMatrix', type='skinCluster')
+            for cluster in clusters:
+                if not cluster in fromClusters:
+                    fromClusters.append(cluster)
+        formSkins=[]
+        for cluster in fromClusters:
+            skinobjs = pm.listConnections(cluster+'.outputGeometry', type='mesh')
+            formSkins.extend(skinobjs)
+        toSkins=[]
+        for obj in formSkins:
+            toSkins.extend(pm.duplicate( obj, n='k2'+obj, rr=True ))
+        self.removeInvalidIntermediate(toSkins)
+        geogrp = pm.group( n='K2Geometry', em=True, w=True )
+        pm.parent(toSkins, geogrp)
+
+        # Bind kinect2 skins
+        #
+        # Set SmoothBind Options
+        for option, var in self.SmoothBindOptions.iteritems():
+            pm.optionVar[option]=var
+        pm.select('SPINEBASE', toSkins, replace=True)
+        # Smooth bind skins.
+        pm.runtime.SmoothBindSkin()
+
+        self.asSkins=formSkins
+        self.k2Skins=toSkins
+
+    def removeInvalidIntermediate(self, objs):
+        allShapes=pm.listRelatives(objs, c=True, s=True)
+        notIntermediateShapes=pm.listRelatives(objs,c=True, s=True, ni=True)
+        intermediateShapes=list(set(allShapes)-set(notIntermediateShapes))
+        for x in intermediateShapes:
+            if not len(pm.listConnections(x)):
+                pm.delete(x)
+
+#--------------------------------MyTry, Useless--------------------------------#
+
+    def MyTry_getSkins_MyTry(self):
+        'MyTry, Useless'
+        objs = pm.ls(sl=True)
+        if len(objs) < 2:
+            pm.error("Must one source skined object and one destination object selected.")
+        return (objs[0], objs[1])
+
+    def MyTry_copyK2SkinWeights(self, fromSkin=None, fromCluster=None, toSkin=None, toCluster=None):
+        'MyTry, Useless'
         # Get Skined Geometry
-        fromSkin, toSkin = self.getSkins()
+        if not fromSkin or not toSkin:
+            fromSkin, toSkin = self.getSkins()
 
         # Get skinCluster
         if not fromCluster:
@@ -170,10 +260,6 @@ class Advanced2Kinect(object):
         #
         # Looping all Vertexs
         for fromvtx, tovtx in zip(fromvtxs, tovtxs):
-            #fromjoints = pm.skinPercent( fromCluster, fromvtx, q=True, t=None )
-            #fromweights = pm.skinPercent( fromCluster, fromvtx, q=True, v=True )
-            #fromdict = {x: y for x, y in zip(fromjoints, fromweights)}
-
             # Get current Vertexs Kinect2 joint's weight list.
             k2weightsList = []
             for k2jo, asjos in self.k2wmap.iteritems():
@@ -195,13 +281,7 @@ class Advanced2Kinect(object):
                         k2weightsList.append((k2jo, k2weight))
 
             pm.skinPercent( toCluster, tovtx, tv=k2weightsList )
-            #break
-
-    def getSkins(self):
-        objs = pm.ls(sl=True)
-        if len(objs) < 2:
-            pm.error("Must one source skined object and one destination object selected.")
-        return (objs[0], objs[1])
+            print fromvtx, tovtx
 
 #------------------------------------------------------------------------------#
 
@@ -209,10 +289,12 @@ def create():
     global a2k
     if a2k is None:
         a2k = Advanced2Kinect()
-    a2k.create()
+    a2k.k2create()
+    a2k.duplicateSkinObjects()
+    a2k.copySkinWeights()
 
 def copySkinWeights():
     global a2k
     if a2k is None:
         a2k = Advanced2Kinect()
-    a2k.copySkinWeights()
+    a2k.copyK2SkinWeights()
