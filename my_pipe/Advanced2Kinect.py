@@ -78,6 +78,7 @@ class Advanced2Kinect(object):
 
     asSkins, k2Skins = [None], [None]
 
+    '''
     SmoothBindOptions = {'multipleBindPosesOpt': 1,
                         'bindMethod': 1,
                         'bindTo': 0,
@@ -87,7 +88,7 @@ class Advanced2Kinect(object):
                         'maxInfl': 3,
                         'normalizeWeights': 2,
                         'obeyMaxInfl': 0}
-
+    '''
 
     def k2create(self):
         #
@@ -175,7 +176,7 @@ class Advanced2Kinect(object):
 
     def copySkinWeights(self):
         if not self.asSkins[0] or not self.k2Skins[0]:
-            pm.error("At least given a source skined object and a destination object.")
+            pm.error("At least given a source skinned object and a destination object.")
         else:
             for fromSkin, toSkin in zip(self.asSkins, self.k2Skins):
                 pm.select(fromSkin, toSkin, replace=True)
@@ -196,18 +197,24 @@ class Advanced2Kinect(object):
         toSkins=[]
         for obj in formSkins:
             toSkins.extend(pm.duplicate( obj, n='k2'+obj, rr=True ))
-        self.removeInvalidIntermediate(toSkins)
+            self.removeInvalidIntermediate(obj)
+            # Bind kinect2 skins
+            pm.skinCluster('SPINEBASE', toSkins[-1], nw=1, mi=3, dr=4.0)
+
         geogrp = pm.group( n='K2Geometry', em=True, w=True )
         pm.parent(toSkins, geogrp)
 
         # Bind kinect2 skins
         #
         # Set SmoothBind Options
+        '''
         for option, var in self.SmoothBindOptions.iteritems():
             pm.optionVar[option]=var
         pm.select('SPINEBASE', toSkins, replace=True)
         # Smooth bind skins.
         pm.runtime.SmoothBindSkin()
+        '''
+
 
         self.asSkins=formSkins
         self.k2Skins=toSkins
@@ -220,18 +227,18 @@ class Advanced2Kinect(object):
             if not len(pm.listConnections(x)):
                 pm.delete(x)
 
-#--------------------------------MyTry, Useless--------------------------------#
+#-----------------------------------Invalid------------------------------------#
 
-    def MyTry_getSkins_MyTry(self):
+    def Invalid_getSkins_MyTry(self):
         'MyTry, Useless'
         objs = pm.ls(sl=True)
         if len(objs) < 2:
-            pm.error("Must one source skined object and one destination object selected.")
+            pm.error("Must one source skinned object and one destination object selected.")
         return (objs[0], objs[1])
 
-    def MyTry_copyK2SkinWeights(self, fromSkin=None, fromCluster=None, toSkin=None, toCluster=None):
+    def Invalid_copyK2SkinWeights(self, fromSkin=None, fromCluster=None, toSkin=None, toCluster=None):
         'MyTry, Useless'
-        # Get Skined Geometry
+        # Get skinned Geometry
         if not fromSkin or not toSkin:
             fromSkin, toSkin = self.getSkins()
 
@@ -239,7 +246,7 @@ class Advanced2Kinect(object):
         if not fromCluster:
             fromClusters = pm.listConnections((fromSkin+'.inMesh'), type='skinCluster')
             if len(fromClusters) > 1:
-                print "The source skined object have more than one skinCluster:"
+                print "The source skinned object have more than one skinCluster:"
                 print fromClusters
                 pm.error("The 'fromCluster' argument should be given.")
             fromCluster = fromClusters[0]
@@ -247,7 +254,7 @@ class Advanced2Kinect(object):
         if not toCluster:
             toClusters = pm.listConnections((toSkin+'.inMesh'), type='skinCluster')
             if len(toClusters) > 1:
-                print "The destination skined object have more than one skinCluster:"
+                print "The destination skinned object have more than one skinCluster:"
                 print fromClusters
                 pm.error("The 'toCluster' argument should be given.")
             toCluster = toClusters[0]
