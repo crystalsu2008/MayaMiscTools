@@ -76,6 +76,11 @@ class Advanced2Kinect(object):
               'ANKLERIGHT': ['Ankle_R', 'Toes_R'],
                'FOOTRIGHT': None}
 
+    noneKeepKeywords =  ['Root', 'Spine', 'Chest', 'Neck', 'Head', 'Eye', 'Jaw',
+                                 'Scapula', 'Shoulder', 'Elbow', 'Wrist', 'Cup',
+      'MiddleFinger', 'ThumbFinger', 'IndexFinger', 'PinkyFinger', 'RingFinger',
+                                                 'Hip', 'Knee', 'Ankle', 'Toes']
+
     asSkins, k2Skins = [None], [None]
 
     '''
@@ -109,7 +114,6 @@ class Advanced2Kinect(object):
                 aimer = pm.aimConstraint( aim, interJoint, aim=aimv, wuo=tag,\
                                    wut='objectrotation', u=(0,1,0), wu=(0,1,0) )
                 pm.delete( aimer )
-
             pm.duplicate( interJoint, n=kjot )
 
         #
@@ -138,7 +142,7 @@ class Advanced2Kinect(object):
             aim = None if aimid is None else self.k2map[aimid][0]
             aimv = (1,0,0)
 
-            # Aim Constraint
+            # Point Constraint
             pm.pointConstraint( tag, (kjot+'intermediate') )
 
             # Aim Constraint
@@ -151,13 +155,71 @@ class Advanced2Kinect(object):
             pm.connectAttr( (kjot+'intermediate.r'), (kjot+'.r') )
             pm.connectAttr( (kjot+'intermediate.t'), (kjot+'.t') )
 
+#------------------------------------------------------------------------------#
+
+        #
+        # Create None Kinect2 Joints
+        #
+        # Get (AdvancedSkeleton: Kinect2) joint dict.
+        as_map_k2={}
+        for k2jo, asjos in self.k2wmap.iteritems():
+            if asjos:
+                for asjo in asjos:
+                    as_map_k2[asjo]=k2jo
+        #for x, y in as_map_k2.iteritems():
+        #    print x,y
+
+        # Finding the keepJoints.
+        keepJoints = {}
+        for joint in pm.listRelatives('DeformationSystem', ad=True, typ='joint'):
+            keepJoint=True
+            for keyword in self.noneKeepKeywords:
+                if keyword in str(joint):
+                    keepJoint=False
+                    break
+
+            if keepJoint:
+                jointParent = pm.listRelatives(joint, p=True, typ='joint')[0]
+                keepJoints[joint] = jointParent
+
+        # Create None Kinect2 joints and intermediate joints.
+        interJoints={}
+        k2keepJoints={}
+        for kepJot, kepJotParent in keepJoints.iteritems():
+            t = pm.xform( kepJot, q=True, ws=True, t=True )
+            pm.select( cl=True )
+            intJot = pm.joint( p=t, n=('k2'+kepJot+'intermediate') )
+            k2kepJot=pm.duplicate( intJot, n=('k2'+kepJot) )[0]
+            # Get the correct parent.
+            if as_map_k2.has_key(str(kepJotParent)):
+                interJoints[intJot] = (as_map_k2[str(kepJotParent)]+'intermediate', kepJot)
+                k2keepJoints[k2kepJot] = (as_map_k2[str(kepJotParent)], intJot)
+            else:
+                interJoints[intJot] = ('k2'+kepJotParent+'intermediate', kepJot)
+                k2keepJoints[k2kepJot] = ('k2'+kepJotParent, intJot)
+
+        #
+        # Make Joints Hierarchy
+        #
+        for intJot, intJotInfo in interJoints.iteritems():
+            pm.parent( intJot, intJotInfo[0] )
+            pm.parentConstraint( intJotInfo[1], intJot )
+        for k2kepJot, k2kepJotInfo in k2keepJoints.iteritems():
+            pm.parent( k2kepJot, k2kepJotInfo[0] )
+            pm.setAttr( (k2kepJot+'.jointOrient'), pm.getAttr(k2kepJotInfo[1]+'.jointOrient') )
+            pm.connectAttr( (k2kepJotInfo[1]+'.r'), (k2kepJot+'.r') )
+            pm.connectAttr( (k2kepJotInfo[1]+'.t'), (k2kepJot+'.t') )
+
+#------------------------------------------------------------------------------#
+
         # Create 'Kinect2' joint root curve handle.
         xpos = pm.xform('HANDTIPLEFT', q=True, t=True, ws=True)
         ypos = pm.xform('HEAD', q=True, t=True, ws=True)
         zpos = pm.xform('SPINEBASE', q=True, t=True, ws=True)
         textCurveGrp = pm.textCurves( f='Courier', t='Kinect2', ch=False)
         bbox = pm.exactWorldBoundingBox(textCurveGrp)
-        pm.xform(textCurveGrp, t=(xpos[0], ypos[1], zpos[2]), ro=(0,0,-90), s=(ypos[1]/3/bbox[3],ypos[1]/3/bbox[3],ypos[1]/3/bbox[3]))
+        pm.xform(textCurveGrp, t=(xpos[0], ypos[1], zpos[2]), ro=(0,0,-90),\
+                      s=(ypos[1]/3/bbox[3],ypos[1]/3/bbox[3],ypos[1]/3/bbox[3]))
         rootCurvesShape = pm.listRelatives(textCurveGrp, ad=True, s=True)
         rootCurves = pm.parent(rootCurvesShape, w=True)
         pm.makeIdentity(rootCurves, apply=True, t=1, r=1, s=1, n=0, pn=1)
