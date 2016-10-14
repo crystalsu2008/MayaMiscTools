@@ -225,7 +225,7 @@ class Advanced2Kinect(object):
         pm.makeIdentity(rootCurves, apply=True, t=1, r=1, s=1, n=0, pn=1)
 
         # Create 'Kinect2' joint root.
-        rootGrp = pm.group( 'SPINEBASE', n='K2Skeleton', w=True, em=True)
+        rootGrp = pm.group( 'SPINEBASE', n='K2_Skeleton', w=True, em=True)
         pm.parent( rootCurvesShape, rootGrp, s=True, add=True)
         pm.delete( textCurveGrp, rootCurves )
         pm.parent( 'SPINEBASE', rootGrp )
@@ -263,7 +263,7 @@ class Advanced2Kinect(object):
             # Bind kinect2 skins
             pm.skinCluster('SPINEBASE', toSkins[-1], nw=1, mi=3, dr=4.0)
 
-        geogrp = pm.group( n='K2Geometry', em=True, w=True )
+        geogrp = pm.group( n='K2_Geometry', em=True, w=True )
         pm.parent(toSkins, geogrp)
 
         # Bind kinect2 skins
