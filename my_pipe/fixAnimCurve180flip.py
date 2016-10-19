@@ -28,7 +28,7 @@ class fixAnimCurve180flip(object):
         return attrs
 
     def fix(self):
-        attrs = fixflip.getSelectedChannels()
+        attrs = self.getSelectedChannels()
         objs = pm.ls(sl=True)
 
         if not objs:
