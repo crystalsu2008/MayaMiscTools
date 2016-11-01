@@ -1,0 +1,783 @@
+//global proc hh_expression_ct_creator ()
+// Ver 1.0
+{
+    float $textScale = 10;
+
+    //Create blendShape
+    string $tmpExpressionBlendNode[] = `blendShape Jaw_UP Jaw_Down Jaw_Move_R Jaw_Move_L Mouth_ZCDNRSTX Mouth_A_E_I Mouth_U_W Mouth_B_M_P Mouth_F_V Mouth_O Mouth_Kiss Mouth_Shrink_R Mouth_Shrink_L Mouth_Extend_R Mouth_Extend_L Mouth_Smile Mouth_Smile_R Mouth_Smile_L Mouth_Depressed Mouth_Depressed_R Mouth_Depressed_L Mouth_Jeer_Down Mouth_Jeer_Down_R Mouth_Jeer_Down_L Mouth_Jeer_Up Mouth_Jeer_Up_R Mouth_Jeer_Up_L facial_blendshapes|Brow_Up_In_R facial_blendshapes|Brow_Up_In_L Brow_Up_Out_R Brow_Up_Out_L Brow_Down_Out_R Brow_Down_Out_L Brow_Angry_R Brow_Angry_L LowerEyelid_Half_R LowerEyelid_Half_L UpperEyelid_Half_R UpperEyelid_Half_L UpperEyelid_R UpperEyelid_L LowerEyelid_Look_Up UpperEyelid_Look_Down Nose_Enlarge Nose_Down Nose_Up Nose_Up_R Nose_Up_L Nose_Move_R Nose_Move_L Head_Mesh`;
+    string $expressionBlendNode = `rename $tmpExpressionBlendNode[0] "expressionBlendShape"`;
+
+    //pronunciation Control zcdnrsx
+    string $cmd_SlideSlot = "curve -d 1 -p -3.970774429e-007 0.5034758 0 -p 50 0.5034758 0 -p 50 -0.5034758 0 -p -3.970774429e-007 -0.5034758 0 -p -3.970774429e-007 0.5034758 0 ;";
+    string $cmd_Slider = "curve -d 1 -p -2.5 3.4885247 0 -p 2.5 3.4885247 0 -p 2.5 -3.4885247 0 -p -2.5 -3.4885247 0 -p -2.5 3.4885247 0 ;";
+
+    string $Slider_Dock_zcdnrsx = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_zcdnrsx = `rename $Slider_Dock_zcdnrsx "Slider_Dock_zcdnrsx"`;
+    string $expressionCtrl_rootGrp = `group -name "expression_control" $Slider_Dock_zcdnrsx`;//parent $Slider_Dock_zcdnrsx $expressionCtrl_rootGrp;
+
+    string $titleCurve_zcdnrsx[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "zcdnrsx"`;
+    parent $titleCurve_zcdnrsx[0] $Slider_Dock_zcdnrsx;
+    setAttr ($titleCurve_zcdnrsx[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_zcdnrsx[0]+".t") -35 -2.3 0;
+    setAttr ($titleCurve_zcdnrsx[0]+".template") 1;
+
+    string $SlideSlot_zcdnrsx = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_zcdnrsx $Slider_Dock_zcdnrsx;
+    $SlideSlot_zcdnrsx = `rename $SlideSlot_zcdnrsx "SlideSlot_curve_zcdnrsx"`;
+    setAttr ($SlideSlot_zcdnrsx+".template") 1;
+
+    string $Slider_zcdnrsx = `eval $cmd_Slider`;
+    parent $Slider_zcdnrsx $Slider_Dock_zcdnrsx;
+    $Slider_zcdnrsx = `rename $Slider_zcdnrsx "Slider_zcdnrsx"`;
+
+    transformLimits -tx 0 50 -etx 1 1 $Slider_zcdnrsx;
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_zcdnrsx+".v");
+
+    setAttr ($Slider_Dock_zcdnrsx+".t") 90 0 0;
+
+    setDrivenKeyframe -cd ($Slider_zcdnrsx+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_ZCDNRSTX");
+    setDrivenKeyframe -cd ($Slider_zcdnrsx+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_ZCDNRSTX");
+
+    //pronunciation Control A_E_I
+    string $Slider_Dock_aei = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_aei = `rename $Slider_Dock_aei "Slider_Dock_aei"`;
+    parent $Slider_Dock_aei $expressionCtrl_rootGrp;
+    
+    string $titleCurve_aei[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "a_e_i"`;
+    parent $titleCurve_aei[0] $Slider_Dock_aei;
+    setAttr ($titleCurve_aei[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_aei[0]+".t") -31 -2.3 0;
+    setAttr ($titleCurve_aei[0]+".template") 1;
+
+    string $SlideSlot_aei = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_aei $Slider_Dock_aei;
+    $SlideSlot_aei = `rename $SlideSlot_aei "SlideSlot_curve_aei"`;
+    setAttr ($SlideSlot_aei+".template") 1;
+
+    string $Slider_aei = `eval $cmd_Slider`;
+    parent $Slider_aei $Slider_Dock_aei;
+    $Slider_aei = `rename $Slider_aei "Slider_aei"`;
+
+    transformLimits -tx 0 50 -etx 1 1 $Slider_aei;
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_aei+".v");
+
+    setAttr ($Slider_Dock_aei+".t") 90 -12 0;
+
+    setDrivenKeyframe -cd ($Slider_aei+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_A_E_I");
+    setDrivenKeyframe -cd ($Slider_aei+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_A_E_I");
+
+    //pronunciation Control U_W
+    string $Slider_Dock_uw = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_uw = `rename $Slider_Dock_uw "Slider_Dock_uw"`;
+    parent $Slider_Dock_uw $expressionCtrl_rootGrp;
+
+    string $titleCurve_uw[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "u_w"`;
+    parent $titleCurve_uw[0] $Slider_Dock_uw;
+    setAttr ($titleCurve_uw[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_uw[0]+".t") -27 -2.3 0;
+    setAttr ($titleCurve_uw[0]+".template") 1;
+
+    string $SlideSlot_uw = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_uw $Slider_Dock_uw;
+    $SlideSlot_uw = `rename $SlideSlot_uw "SlideSlot_curve_uw"`;
+    setAttr ($SlideSlot_uw+".template") 1;
+
+    string $Slider_uw = `eval $cmd_Slider`;
+    parent $Slider_uw $Slider_Dock_uw;
+    $Slider_uw = `rename $Slider_uw "Slider_uw"`;
+
+    transformLimits -tx 0 50 -etx 1 1 $Slider_uw;
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_uw+".v");
+
+    setAttr ($Slider_Dock_uw+".t") 90 -24 0;
+
+    setDrivenKeyframe -cd ($Slider_uw+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_U_W");
+    setDrivenKeyframe -cd ($Slider_uw+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_U_W");
+
+    //pronunciation Control B_M_P
+    string $cmd_SlideSlot = "curve -d 1 -p -3.970774429e-007 0.5034758 0 -p 50 0.5034758 0 -p 50 -0.5034758 0 -p -3.970774429e-007 -0.5034758 0 -p -3.970774429e-007 0.5034758 0 ;";
+    string $cmd_Slider = "curve -d 1 -p -2.5 3.4885247 0 -p 2.5 3.4885247 0 -p 2.5 -3.4885247 0 -p -2.5 -3.4885247 0 -p -2.5 3.4885247 0 ;";
+
+    string $Slider_Dock_bmp = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_bmp = `rename $Slider_Dock_bmp "Slider_Dock_bmp"`;
+    parent $Slider_Dock_bmp $expressionCtrl_rootGrp;
+
+    string $titleCurve_bmp[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "b_m_p"`;
+    parent $titleCurve_bmp[0] $Slider_Dock_bmp;
+    setAttr ($titleCurve_bmp[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_bmp[0]+".t") -33 -2.3 0;
+    setAttr ($titleCurve_bmp[0]+".template") 1;
+
+    string $SlideSlot_bmp = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_bmp $Slider_Dock_bmp;
+    $SlideSlot_bmp = `rename $SlideSlot_bmp "SlideSlot_curve_bmp"`;
+    setAttr ($SlideSlot_bmp+".template") 1;
+
+    string $Slider_bmp = `eval $cmd_Slider`;
+    parent $Slider_bmp $Slider_Dock_bmp;
+    $Slider_bmp = `rename $Slider_bmp "Slider_bmp"`;
+
+    transformLimits -tx 0 50 -etx 1 1 $Slider_bmp;
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_bmp+".v");
+
+    setAttr ($Slider_Dock_bmp+".t") 90 -36 0;
+
+    setDrivenKeyframe -cd ($Slider_bmp+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_B_M_P");
+    setDrivenKeyframe -cd ($Slider_bmp+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_B_M_P");
+
+    //pronunciation Control f_v
+    string $cmd_SlideSlot = "curve -d 1 -p -3.970774429e-007 0.5034758 0 -p 50 0.5034758 0 -p 50 -0.5034758 0 -p -3.970774429e-007 -0.5034758 0 -p -3.970774429e-007 0.5034758 0 ;";
+    string $cmd_Slider = "curve -d 1 -p -2.5 3.4885247 0 -p 2.5 3.4885247 0 -p 2.5 -3.4885247 0 -p -2.5 -3.4885247 0 -p -2.5 3.4885247 0 ;";
+
+    string $Slider_Dock_fv = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_fv = `rename $Slider_Dock_fv "Slider_Dock_fv"`;
+    parent $Slider_Dock_fv $expressionCtrl_rootGrp;
+
+    string $titleCurve_fv[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "f_v"`;
+    parent $titleCurve_fv[0] $Slider_Dock_fv;
+    setAttr ($titleCurve_fv[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_fv[0]+".t") -26 -2.3 0;
+    setAttr ($titleCurve_fv[0]+".template") 1;
+
+    string $SlideSlot_fv = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_fv $Slider_Dock_fv;
+    $SlideSlot_fv = `rename $SlideSlot_fv "SlideSlot_curve_fv"`;
+    setAttr ($SlideSlot_fv+".template") 1;
+
+    string $Slider_fv = `eval $cmd_Slider`;
+    parent $Slider_fv $Slider_Dock_fv;
+    $Slider_fv = `rename $Slider_fv "Slider_fv"`;
+    
+    transformLimits -tx 0 50 -etx 1 1 $Slider_fv;
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_fv+".v");
+    
+    setAttr ($Slider_Dock_fv+".t") 90 -48 0;
+
+    setDrivenKeyframe -cd ($Slider_fv+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_F_V");
+    setDrivenKeyframe -cd ($Slider_fv+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_F_V");
+    
+    //pronunciation Control o
+    string $cmd_SlideSlot = "curve -d 1 -p -3.970774429e-007 0.5034758 0 -p 50 0.5034758 0 -p 50 -0.5034758 0 -p -3.970774429e-007 -0.5034758 0 -p -3.970774429e-007 0.5034758 0 ;";
+    string $cmd_Slider = "curve -d 1 -p -2.5 3.4885247 0 -p 2.5 3.4885247 0 -p 2.5 -3.4885247 0 -p -2.5 -3.4885247 0 -p -2.5 3.4885247 0 ;";
+
+    string $Slider_Dock_o = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_o = `rename $Slider_Dock_o "Slider_Dock_o"`;
+    parent $Slider_Dock_o $expressionCtrl_rootGrp;
+
+    string $titleCurve_o[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "o"`;
+    parent $titleCurve_o[0] $Slider_Dock_o;
+    setAttr ($titleCurve_o[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_o[0]+".t") -22 -2.3 0;
+    setAttr ($titleCurve_o[0]+".template") 1;
+
+    string $SlideSlot_o = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_o $Slider_Dock_o;
+    $SlideSlot_o = `rename $SlideSlot_o "SlideSlot_curve_o"`;
+    setAttr ($SlideSlot_o+".template") 1;
+
+    string $Slider_o = `eval $cmd_Slider`;
+    parent $Slider_o $Slider_Dock_o;
+    $Slider_o = `rename $Slider_o "Slider_o"`;
+    
+    transformLimits -tx 0 50 -etx 1 1 $Slider_o;
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_o+".v");
+    
+    setAttr ($Slider_Dock_o+".t") 90 -60 0;
+
+    setDrivenKeyframe -cd ($Slider_o+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_O");
+    setDrivenKeyframe -cd ($Slider_o+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_O");
+
+    //pronunciation Control Kiss
+    string $cmd_SlideSlot = "curve -d 1 -p -3.970774429e-007 0.5034758 0 -p 50 0.5034758 0 -p 50 -0.5034758 0 -p -3.970774429e-007 -0.5034758 0 -p -3.970774429e-007 0.5034758 0 ;";
+    string $cmd_Slider = "curve -d 1 -p -2.5 3.4885247 0 -p 2.5 3.4885247 0 -p 2.5 -3.4885247 0 -p -2.5 -3.4885247 0 -p -2.5 3.4885247 0 ;";
+
+    string $Slider_Dock_Kiss = `curve -d 1 -p -37 5 0 -p 53.83574775 5 0 -p 53.83574775 -5 0 -p -37 -5 0 -p -37 5 0`;
+    $Slider_Dock_Kiss = `rename $Slider_Dock_Kiss "Slider_Dock_Kiss"`;
+    parent $Slider_Dock_Kiss $expressionCtrl_rootGrp;
+
+    string $titleCurve_Kiss[] = `textCurves -ch 0 -f "Times New Roman|h-13|w400|c0" -t "Kiss"`;
+    parent $titleCurve_Kiss[0] $Slider_Dock_Kiss;
+    setAttr ($titleCurve_Kiss[0]+".s") $textScale $textScale $textScale;
+    setAttr ($titleCurve_Kiss[0]+".t") -28 -2.3 0;
+    setAttr ($titleCurve_Kiss[0]+".template") 1;
+
+    string $SlideSlot_Kiss = `eval $cmd_SlideSlot`;
+    parent $SlideSlot_Kiss $Slider_Dock_Kiss;
+    $SlideSlot_Kiss = `rename $SlideSlot_Kiss "SlideSlot_curve_Kiss"`;
+    setAttr ($SlideSlot_Kiss+".template") 1;
+
+    string $Slider_Kiss = `eval $cmd_Slider`;
+    parent $Slider_Kiss $Slider_Dock_Kiss;
+    $Slider_Kiss = `rename $Slider_Kiss "Slider_Kiss"`;
+    
+    transformLimits -tx 0 50 -etx 1 1 $Slider_Kiss;
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".ty");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Slider_Kiss+".v");
+    
+    setAttr ($Slider_Dock_Kiss+".t") 90 -72 0;
+
+    setDrivenKeyframe -cd ($Slider_Kiss+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Kiss");
+    setDrivenKeyframe -cd ($Slider_Kiss+".translateX") -dv 50 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Kiss");
+    
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    string $cmd_headGrp_curve = "curve -p -5.000001124e-008 30.6789418 0 -p -2.14157775 30.5893632 0 -p -6.08419185 30.2882636 0 -p -10.36171435 29.0775077 0 -p -11.77474445 28.8891037 0 -p -12.81096655 30.7731438 0 -p -15.07474155 33.0928909 0 -p -17.21047495 34.3204439 0 -p -21.35536325 34.5088479 0 -p -25.52823765 32.186174 0 -p -27.79201275 27.9176342 0 -p -27.12967175 23.4253872 0 -p -24.68041955 19.6573069 0 -p -23.45500945 18.3224915 0 -p -24.30361155 16.0776306 0 -p -25.43403565 13.25157029 0 -p -28.60336135 4.842042695 0 -p -30.89775215 -4.081599205 0 -p -31.39195905 -14.0143463 0 -p -26.54455245 -22.63782682 0 -p -19.60636235 -27.0645372 0 -p -14.10910335 -32.61916612 0 -p -5.000001124e-008 -34.50884789 0 -p 14.10910335 -32.61916612 0 -p 19.60636235 -27.0645372 0 -p 26.54455245 -22.63782682 0 -p 31.39195905 -14.0143463 0 -p 30.89775215 -4.081599205 0 -p 28.60336135 4.842042695 0 -p 25.43403565 13.25157029 0 -p 24.30361155 16.0776306 0 -p 23.45500945 18.3224915 0 -p 24.68041955 19.6573069 0 -p 27.12967175 23.4253872 0 -p 27.79201265 27.9176342 0 -p 25.52823765 32.186174 0 -p 21.35536325 34.5088479 0 -p 17.21047495 34.3204439 0 -p 15.07474155 33.0928909 0 -p 12.81096655 30.7731438 0 -p 11.77474445 28.8891037 0 -p 10.36171425 29.0775077 0 -p 6.08419185 30.2882636 0 -p 2.14157775 30.5893632 0 -p -5.000001124e-008 30.6789418 0;";
+    string $cmd_Jaw_curve = "curve -p 2.499999141e-008 -7 -1.57772181e-030 -p -0.794751475 -7 -1.2246468e-016 -p -3.830259775 -7 -5.9021155e-016 -p -7.293831375 -5.5388791 -1.12391946e-015 -p -9.719471875 -1.66854875 -1.49769072e-015 -p -10.33177008 1.94991542 -1.59204084e-015 -p -10.33177008 3.9580737 -1.59204084e-015 -p -10.33177008 6 -1.59204084e-015 -p -10.33177008 7 -1.59204084e-015 -p 2.499999141e-008 7 -1.57772181e-030 -p 10.33177007 7 1.59204084e-015 -p 10.33177007 6 1.59204084e-015 -p 10.33177007 3.9580737 1.59204084e-015 -p 10.33177007 1.94991542 1.59204084e-015 -p 9.719471915 -1.66854875 1.49769073e-015 -p 7.293831425 -5.5388791 1.12391947e-015 -p 3.830259825 -7 5.9021155e-016 -p 0.794751525 -7 1.2246468e-016 -p 2.499999141e-008 -7 -1.57772181e-030 ;";
+    string $cmd_Jaw_Scope = "curve -d 1 -p -17.346979 11.99999998 0 -p 17.346979 11.99999998 0 -p 17.346979 -11.99999997 0 -p -17.346979 -11.99999997 0 -p -17.346979 11.99999998 0 ;";
+
+    //string $expression_Ctrl_Grp = 
+    string $headGrp_curve = `eval $cmd_headGrp_curve`;
+    $headGrp_curve = `rename $headGrp_curve "expressionCtrl_headGrp"`;
+    parent $headGrp_curve $expressionCtrl_rootGrp;
+
+    //Jaw Control
+    //
+    //
+    string $Jaw_curve = `eval $cmd_Jaw_curve`;
+    $Jaw_curve = `rename $Jaw_curve "expressionCtrl_Jaw"`;
+
+    transformLimits -tx -7 7 -etx 1 1 -ty -5 5 -ety 1 1 $Jaw_curve;
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Jaw_curve+".v");
+
+    setDrivenKeyframe -cd ($Jaw_curve+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Jaw_Move_L");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateX") -dv 7 -v 1 -itt linear -ott linear ($expressionBlendNode+".Jaw_Move_L");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateX") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Jaw_Move_R");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateX") -dv -7 -v 1 -itt linear -ott linear ($expressionBlendNode+".Jaw_Move_R");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateY") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Jaw_UP");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateY") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Jaw_UP");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateY") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Jaw_Down");
+    setDrivenKeyframe -cd ($Jaw_curve+".translateY") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Jaw_Down");
+
+    string $Jaw_Scope = `eval $cmd_Jaw_Scope`;
+    $Jaw_Scope = `rename $Jaw_Scope "expressionCtrl_Jaw_Scope"`;
+    setAttr ($Jaw_Scope+".template") 1;
+
+    string $Jaw_curve_grp = `group -name "expressionCtrl_Jaw_grp" $Jaw_curve $Jaw_Scope`;
+    setAttr ($Jaw_curve_grp+".ty") -31.5;
+    parent $Jaw_curve_grp $headGrp_curve;
+
+    //Mouth Corner Control
+    //Mouth Smile Depressed
+    //
+    //
+    string $tmpMouth_Corner_R[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 3 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    string $Mouth_Corner_R = `rename $tmpMouth_Corner_R[0] "expressionCtrl_Mouth_Corner_R"`;
+    string $Mouth_Corner_R_Scope = `curve -d 1 -p -8 7.999999995 0 -p 8 7.999999995 0 -p 8 -7.999999995 0 -p -8 -7.999999995 0 -p -8 7.999999995 0` ;
+    $Mouth_Corner_R_Scope = `rename $Mouth_Corner_R_Scope "expressionCtrl_Mouth_Corner_R_Scope"`;
+    setAttr ($Mouth_Corner_R_Scope+".template") 1;
+    string $Mouth_Corner_R_grp = `group -name "expressionCtrl_Mouth_Corner_R_grp" $Mouth_Corner_R $Mouth_Corner_R_Scope`;
+    setAttr ($Mouth_Corner_R_grp+".t") -20 -15 0;
+    parent $Mouth_Corner_R_grp $headGrp_curve;
+
+    transformLimits -tx -5 5 -etx 1 1 -ty -5 5 -ety 1 1 $Mouth_Corner_R;
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_R+".v");
+
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".tx") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Shrink_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".tx") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Shrink_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".tx") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Extend_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".tx") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Extend_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Smile_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Smile_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Depressed_R");
+    setDrivenKeyframe -cd ($Mouth_Corner_R+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Depressed_R");
+
+
+
+    string $tmpMouth_Corner_L[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 3 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    string $Mouth_Corner_L = `rename $tmpMouth_Corner_L[0] "expressionCtrl_Mouth_Corner_L"`;
+    string $Mouth_Corner_L_Scope = `curve -d 1 -p -8 7.999999995 0 -p 8 7.999999995 0 -p 8 -7.999999995 0 -p -8 -7.999999995 0 -p -8 7.999999995 0` ;
+    $Mouth_Corner_L_Scope = `rename $Mouth_Corner_L_Scope "expressionCtrl_Mouth_Corner_L_Scope"`;
+    setAttr ($Mouth_Corner_L_Scope+".template") 1;
+    string $Mouth_Corner_L_grp = `group -name "expressionCtrl_Mouth_Corner_L_grp" $Mouth_Corner_L $Mouth_Corner_L_Scope`;
+    setAttr ($Mouth_Corner_L_grp+".t") 20 -15 0;
+    parent $Mouth_Corner_L_grp $headGrp_curve;
+
+    transformLimits -tx -5 5 -etx 1 1 -ty -5 5 -ety 1 1 $Mouth_Corner_L;
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Corner_L+".v");
+
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".tx") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Shrink_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".tx") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Shrink_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".tx") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Extend_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".tx") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Extend_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Smile_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Smile_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Depressed_L");
+    setDrivenKeyframe -cd ($Mouth_Corner_L+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Depressed_L");
+
+
+    
+    string $Mouth_Smile_Depressed = `curve -d 1 -p 0 1 0 -p 12 0 0 -p 0 -1 0 -p -12 0 0 -p 0 1 0`;
+    $Mouth_Smile_Depressed = `rename $Mouth_Smile_Depressed "expressionCtrl_Mouth_Smile_Depressed"`;
+    string $Mouth_Smile_Depressed_grp = `group -name "expressionCtrl_Mouth_Smile_Depressed_grp" $Mouth_Smile_Depressed`;
+    setAttr ($Mouth_Smile_Depressed_grp+".t") 0 -18 0;
+    parent $Mouth_Smile_Depressed_grp $headGrp_curve;
+
+    transformLimits -ty -5 5 -ety 1 1 $Mouth_Smile_Depressed;
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Smile_Depressed+".v");
+
+    setDrivenKeyframe -cd ($Mouth_Smile_Depressed+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Smile");
+    setDrivenKeyframe -cd ($Mouth_Smile_Depressed+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Smile");
+    setDrivenKeyframe -cd ($Mouth_Smile_Depressed+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Mouth_Depressed");
+    setDrivenKeyframe -cd ($Mouth_Smile_Depressed+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Mouth_Depressed");
+
+    //Mouth Jeer
+    //
+    //
+    string $tmpMouth_Jeer_R[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 3 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    $Mouth_Jeer_R = `rename $tmpMouth_Jeer_R[0] "expressionCtrl_Mouth_Jeer_R"`;
+    setAttr ($Mouth_Jeer_R+".t") 5 0 0;
+
+    string $Mouth_Jeer_ConstraintPlane_R = `surface -du 1 -dv 1 -ku 0 -ku 1 -kv 0 -kv 1 -p -5 5 0 -p 5 0 0 -p -5 -5 0 -p 5 0 0`;
+    string $tmpMouth_Jeer_ConstraintPlane_R[] = `listRelatives -p $Mouth_Jeer_ConstraintPlane_R`;
+    $Mouth_Jeer_ConstraintPlane_R = `rename $tmpMouth_Jeer_ConstraintPlane_R[0] "Mouth_Jeer_ConstraintPlane_R"`;
+    setAttr ($Mouth_Jeer_ConstraintPlane_R+".template") 1;
+    geometryConstraint -weight 1 $Mouth_Jeer_ConstraintPlane_R $Mouth_Jeer_R;
+
+    string $Mouth_Jeer_Grp_R = `group -name "expressionCtrl_Mouth_Jeer_Grp_R" $Mouth_Jeer_R $Mouth_Jeer_ConstraintPlane_R`;
+    setAttr ($Mouth_Jeer_Grp_R+".t") -40 -15 0;
+    parent $Mouth_Jeer_Grp_R $headGrp_curve;
+
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_R+".v");
+
+    string $exprecmd_Mouth_Jeer_R = "float $inst = 1.0 - linstep(-5, 5, " + $Mouth_Jeer_R + ".tx);\n" + 
+        $expressionBlendNode + ".Mouth_Jeer_Up_R = linstep(-5, 5, " + $Mouth_Jeer_R + ".ty) * $inst;\n" +
+        $expressionBlendNode + ".Mouth_Jeer_Down_R = (1.0 - linstep(-5, 5, " + $Mouth_Jeer_R + ".ty)) * $inst;";
+    
+    expression -s $exprecmd_Mouth_Jeer_R -n "expression_Mouth_Jeer_R";
+
+
+
+    string $tmpMouth_Jeer_L[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 3 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    $Mouth_Jeer_L = `rename $tmpMouth_Jeer_L[0] "expressionCtrl_Mouth_Jeer_L"`;
+    setAttr ($Mouth_Jeer_L+".t") -5 0 0;
+
+    string $Mouth_Jeer_ConstraintPlane_L = `surface -du 1 -dv 1 -ku 0 -ku 1 -kv 0 -kv 1 -p -5 0 0 -p 5 5 0 -p -5 0 0 -p 5 -5 0`;
+    string $tmpMouth_Jeer_ConstraintPlane_L[] = `listRelatives -p $Mouth_Jeer_ConstraintPlane_L`;
+    $Mouth_Jeer_ConstraintPlane_L = `rename $tmpMouth_Jeer_ConstraintPlane_L[0] "Mouth_Jeer_ConstraintPlane_L"`;
+    setAttr ($Mouth_Jeer_ConstraintPlane_L+".template") 1;
+    geometryConstraint -weight 1 $Mouth_Jeer_ConstraintPlane_L $Mouth_Jeer_L;
+
+    string $Mouth_Jeer_Grp_L = `group -name "expressionCtrl_Mouth_Jeer_Grp_L" $Mouth_Jeer_L $Mouth_Jeer_ConstraintPlane_L`;
+    setAttr ($Mouth_Jeer_Grp_L+".t") 40 -15 0;
+    parent $Mouth_Jeer_Grp_L $headGrp_curve;
+
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Mouth_Jeer_L+".v");
+
+    string $exprecmd_Mouth_Jeer_L = "float $inst = linstep(-5, 5, " + $Mouth_Jeer_L + ".tx);\n" + 
+        $expressionBlendNode + ".Mouth_Jeer_Up_L = linstep(-5, 5, " + $Mouth_Jeer_L + ".ty) * $inst;\n" +
+        $expressionBlendNode + ".Mouth_Jeer_Down_L = (1.0 - linstep(-5, 5, " + $Mouth_Jeer_L + ".ty)) * $inst;";
+
+    expression -s $exprecmd_Mouth_Jeer_L -n "expression_Mouth_Jeer_L";
+
+
+    //Brow Control
+    //
+    //
+    string $Brow_Up_In_R = `curve -p -2.64187375 1.5 0 -p -0.38591175 1.5 0 -p 2.42005555 1.5 0 -p 3.53625575 1.5 0 -p 3.53625575 -0.2001944 0 -p 3.53625575 -1.5 0 -p 2.29304305 -1.5 0 -p -1.37289515 -1.5 0 -p -3.53625575 -1.5 0 -p -3.52202905 0.0411871 0 -p -3.48646255 1.5 0 -p -2.68887295 1.5 0`;
+    $Brow_Up_In_R = `rename $Brow_Up_In_R "expressionCtrl_Brow_Up_In_R"`;
+    string $Brow_Up_In_Grp_R = `group -name "expressionCtrl_Brow_Up_In_Grp_R" $Brow_Up_In_R`;
+    setAttr ($Brow_Up_In_Grp_R+".t") -9 18 0;
+    parent $Brow_Up_In_Grp_R $headGrp_curve;
+    
+    transformLimits -ty -5 5 -ety 1 1 $Brow_Up_In_R;
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_R+".v");
+
+    setDrivenKeyframe -cd ($Brow_Up_In_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_In_R");
+    setDrivenKeyframe -cd ($Brow_Up_In_R+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_In_R");
+    setDrivenKeyframe -cd ($Brow_Up_In_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Angry_R");
+    setDrivenKeyframe -cd ($Brow_Up_In_R+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Angry_R");
+
+
+
+    string $Brow_Up_In_L = `curve -p 2.64187375 1.5 0 -p 0.38591175 1.5 0 -p -2.42005555 1.5 0 -p -3.53625575 1.5 0 -p -3.53625575 -0.2001944 0 -p -3.53625575 -1.5 0 -p -2.29304305 -1.5 0 -p 1.37289515 -1.5 0 -p 3.53625575 -1.5 0 -p 3.52202905 0.0411871 0 -p 3.48646255 1.5 0 -p 2.68887295 1.5 0`;
+    $Brow_Up_In_L = `rename $Brow_Up_In_L "expressionCtrl_Brow_Up_In_L"`;
+    string $Brow_Up_In_Grp_L = `group -name "expressionCtrl_Brow_Up_In_Grp_L" $Brow_Up_In_L`;
+    setAttr ($Brow_Up_In_Grp_L+".t") 9 18 0;
+    parent $Brow_Up_In_Grp_L $headGrp_curve;
+    
+    transformLimits -ty -5 5 -ety 1 1 $Brow_Up_In_L;
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_In_L+".v");
+
+    setDrivenKeyframe -cd ($Brow_Up_In_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_In_L");
+    setDrivenKeyframe -cd ($Brow_Up_In_L+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_In_L");
+    setDrivenKeyframe -cd ($Brow_Up_In_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Angry_L");
+    setDrivenKeyframe -cd ($Brow_Up_In_L+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Angry_L");
+
+
+
+    string $Brow_Up_Out_R = `curve -p 4.6214182 2.12377205 0 -p 4.7142892 2.08065145 0 -p 4.7242184 0.04926635 0 -p 4.7418461 -0.77373025 0 -p 3.2437022 -0.77373025 0 -p 0.510237 -0.77373025 0 -p -2.4830579 -1.42728325 0 -p -4.7418461 -2.22626975 0 -p -4.0198353 -1.19287575 0 -p -2.7139715 0.10882665 0 -p -0.9053917 1.52675825 0 -p 2.3845528 2.22626975 0 -p 2.7161625 2.22626975 0 -p 4.6651644 2.22626975 0 -p 4.6214182 2.12377205 0`;
+    $Brow_Up_Out_R = `rename $Brow_Up_Out_R "expressionCtrl_Brow_Up_Out_R"`;
+    string $Brow_Up_Out_Grp_R = `group -name "expressionCtrl_Brow_Up_Out_Grp_R" $Brow_Up_Out_R`;
+    setAttr ($Brow_Up_Out_Grp_R+".t") -18 17.25 0;
+    parent $Brow_Up_Out_Grp_R $headGrp_curve;
+    
+    transformLimits -ty -5 5 -ety 1 1 $Brow_Up_Out_R;
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_R+".v");
+
+    setDrivenKeyframe -cd ($Brow_Up_Out_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_Out_R");
+    setDrivenKeyframe -cd ($Brow_Up_Out_R+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_Out_R");
+    setDrivenKeyframe -cd ($Brow_Up_Out_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Down_Out_R");
+    setDrivenKeyframe -cd ($Brow_Up_Out_R+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Down_Out_R");
+
+
+
+    string $Brow_Up_Out_L = `curve -p -4.6214182 2.12377205 0 -p -4.7142892 2.08065145 0 -p -4.7242184 0.04926635 0 -p -4.7418461 -0.77373025 0 -p -3.2437022 -0.77373025 0 -p -0.510237 -0.77373025 0 -p 2.4830579 -1.42728325 0 -p 4.7418461 -2.22626975 0 -p 4.0198353 -1.19287575 0 -p 2.7139715 0.10882665 0 -p 0.9053917 1.52675825 0 -p -2.3845528 2.22626975 0 -p -2.7161625 2.22626975 0 -p -4.6651644 2.22626975 0 -p -4.6214182 2.12377205 0`;
+    $Brow_Up_Out_L = `rename $Brow_Up_Out_L "expressionCtrl_Brow_Up_Out_L"`;
+    string $Brow_Up_Out_Grp_L = `group -name "expressionCtrl_Brow_Up_Out_Grp_L" $Brow_Up_Out_L`;
+    setAttr ($Brow_Up_Out_Grp_L+".t") 18 17.25 0;
+    parent $Brow_Up_Out_Grp_L $headGrp_curve;
+    
+    transformLimits -ty -5 5 -ety 1 1 $Brow_Up_Out_L;
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Brow_Up_Out_L+".v");
+
+    setDrivenKeyframe -cd ($Brow_Up_Out_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_Out_L");
+    setDrivenKeyframe -cd ($Brow_Up_Out_L+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Up_Out_L");
+    setDrivenKeyframe -cd ($Brow_Up_Out_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Brow_Down_Out_L");
+    setDrivenKeyframe -cd ($Brow_Up_Out_L+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".Brow_Down_Out_L");
+
+
+    //Eyelid Control
+    //
+    //
+    string $UpperEyelid_Half_R = `curve -p 4.999999703e-008 1.6579173 9.146318885e-016 -p -2.00430075 1.6579173 9.146318885e-016 -p -6.01290215 0.3615243 7.268733704e-016 -p -8.50352775 -1.6579173 4.693962948e-017 -p -6.01290215 -1.0424714 -6.329941115e-016 -p 4.999999703e-008 0.320564 -9.146318885e-016 -p 6.01290215 -1.0424714 -6.329941115e-016 -p 8.50352775 -1.6579173 4.693962948e-017 -p 6.01290215 0.3615243 7.268733704e-016 -p 2.00430075 1.6579173 9.146318885e-016 -p 4.999999703e-008 1.6579173 9.146318885e-016`;
+    $UpperEyelid_Half_R = `rename $UpperEyelid_Half_R "expressionCtrl_UpperEyelid_Half_R"`;
+    string $tmpEyeball_Scope_R[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 5 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n "Eyeball_Scope_R"`;
+    setAttr ($tmpEyeball_Scope_R[0]+".t") 0 -5 0;
+    setAttr ($tmpEyeball_Scope_R[0]+".template") 1;
+    string $UpperEyelid_Half_Grp_R = `group -name "expressionCtrl_UpperEyelid_Half_Grp_R" $UpperEyelid_Half_R $tmpEyeball_Scope_R[0]`;
+    setAttr ($UpperEyelid_Half_Grp_R+".t") -14 8 0;
+    parent $UpperEyelid_Half_Grp_R $headGrp_curve;
+
+    transformLimits -ty -5 0 -ety 1 1 $UpperEyelid_Half_R;
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".tx");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_R+".v");
+
+    setDrivenKeyframe -cd ($UpperEyelid_Half_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_Half_R");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_R+".ty") -dv -2.5 -v 1 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_Half_R");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_R+".ty") -dv -5 -v 0 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_Half_R");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_R+".ty") -dv -2.5 -v 0 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_R");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_R+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_R");
+
+
+
+    string $UpperEyelid_Half_L = `curve -p 4.999999703e-008 1.6579173 9.146318885e-016 -p -2.00430075 1.6579173 9.146318885e-016 -p -6.01290215 0.3615243 7.268733704e-016 -p -8.50352775 -1.6579173 4.693962948e-017 -p -6.01290215 -1.0424714 -6.329941115e-016 -p 4.999999703e-008 0.320564 -9.146318885e-016 -p 6.01290215 -1.0424714 -6.329941115e-016 -p 8.50352775 -1.6579173 4.693962948e-017 -p 6.01290215 0.3615243 7.268733704e-016 -p 2.00430075 1.6579173 9.146318885e-016 -p 4.999999703e-008 1.6579173 9.146318885e-016`;
+    $UpperEyelid_Half_L = `rename $UpperEyelid_Half_L "expressionCtrl_UpperEyelid_Half_L"`;
+    string $tmpEyeball_Scope_L[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 5 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n "Eyeball_Scope_L"`;
+    setAttr ($tmpEyeball_Scope_L[0]+".t") 0 -5 0;
+    setAttr ($tmpEyeball_Scope_L[0]+".template") 1;
+    string $UpperEyelid_Half_Grp_L = `group -name "expressionCtrl_UpperEyelid_Half_Grp_L" $UpperEyelid_Half_L $tmpEyeball_Scope_L[0]`;
+    setAttr ($UpperEyelid_Half_Grp_L+".t") 14 8 0;
+    parent $UpperEyelid_Half_Grp_L $headGrp_curve;
+
+    transformLimits -ty -5 0 -ety 1 1 $UpperEyelid_Half_L;
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".tx");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($UpperEyelid_Half_L+".v");
+
+    setDrivenKeyframe -cd ($UpperEyelid_Half_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_Half_L");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_L+".ty") -dv -2.5 -v 1 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_Half_L");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_L+".ty") -dv -5 -v 0 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_Half_L");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_L+".ty") -dv -2.5 -v 0 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_L");
+    setDrivenKeyframe -cd ($UpperEyelid_Half_L+".ty") -dv -5 -v 1 -itt linear -ott linear ($expressionBlendNode+".UpperEyelid_L");
+
+
+
+    string $LowerEyelid_Half_R = `curve -p 4.999999703e-008 -1.6579173 9.146318885e-016 -p -2.00430075 -1.6579173 9.146318885e-016 -p -6.01290215 -0.3615243 7.268733704e-016 -p -8.50352775 1.6579173 4.693962948e-017 -p -6.01290215 1.0424714 -6.329941115e-016 -p 4.999999703e-008 -0.320564 -9.146318885e-016 -p 6.01290215 1.0424714 -6.329941115e-016 -p 8.50352775 1.6579173 4.693962948e-017 -p 6.01290215 -0.3615243 7.268733704e-016 -p 2.00430075 -1.6579173 9.146318885e-016 -p 4.999999703e-008 -1.6579173 9.146318885e-016`;
+    $LowerEyelid_Half_R = `rename $LowerEyelid_Half_R "expressionCtrl_LowerEyelid_Half_R"`;
+    string $LowerEyelid_Half_Grp_R = `group -name "expressionCtrl_LowerEyelid_Half_Grp_R" $LowerEyelid_Half_R`;
+    setAttr ($LowerEyelid_Half_Grp_R+".t") -14 -2 0;
+    parent $LowerEyelid_Half_Grp_R $headGrp_curve;
+
+    transformLimits -ty 0 5 -ety 1 1 $LowerEyelid_Half_R;
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".tx");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_R+".v");
+
+    setDrivenKeyframe -cd ($LowerEyelid_Half_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".LowerEyelid_Half_R");
+    setDrivenKeyframe -cd ($LowerEyelid_Half_R+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".LowerEyelid_Half_R");
+
+
+
+    string $LowerEyelid_Half_L = `curve -p 4.999999703e-008 -1.6579173 9.146318885e-016 -p -2.00430075 -1.6579173 9.146318885e-016 -p -6.01290215 -0.3615243 7.268733704e-016 -p -8.50352775 1.6579173 4.693962948e-017 -p -6.01290215 1.0424714 -6.329941115e-016 -p 4.999999703e-008 -0.320564 -9.146318885e-016 -p 6.01290215 1.0424714 -6.329941115e-016 -p 8.50352775 1.6579173 4.693962948e-017 -p 6.01290215 -0.3615243 7.268733704e-016 -p 2.00430075 -1.6579173 9.146318885e-016 -p 4.999999703e-008 -1.6579173 9.146318885e-016`;
+    $LowerEyelid_Half_L = `rename $LowerEyelid_Half_L "expressionCtrl_LowerEyelid_Half_L"`;
+    string $LowerEyelid_Half_Grp_L = `group -name "expressionCtrl_LowerEyelid_Half_Grp_L" $LowerEyelid_Half_L`;
+    setAttr ($LowerEyelid_Half_Grp_L+".t") 14 -2 0;
+    parent $LowerEyelid_Half_Grp_L $headGrp_curve;
+
+    transformLimits -ty 0 5 -ety 1 1 $LowerEyelid_Half_L;
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".tx");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($LowerEyelid_Half_L+".v");
+
+    setDrivenKeyframe -cd ($LowerEyelid_Half_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".LowerEyelid_Half_L");
+    setDrivenKeyframe -cd ($LowerEyelid_Half_L+".ty") -dv 5 -v 1 -itt linear -ott linear ($expressionBlendNode+".LowerEyelid_Half_L");
+    
+    
+    
+    //Nose Control
+    //
+    //
+    //
+    string $Nose_Control = `curve -p 0.0001465857859 -3.337852213 -2.654056205e-015 -p 1.246356174 -3.289741011 -2.654056212e-015 -p 3.527873904 -1.419334091 -2.151461222e-015 -p 4.78994104 -0.1961448399 -9.490401284e-016 -p 4.95457028 0.4292957024 2.006440279e-017 -p 4.67518235 0.921071964 8.276514546e-016 -p 3.21027754 1.875868602 1.939639349e-015 -p 4.807274599e-009 3.180869549 2.654056143e-015 -p -3.210277531 1.875868602 1.939639349e-015 -p -4.675182346 0.9210719639 8.276514546e-016 -p -4.954570278 0.4292957023 2.006440279e-017 -p -4.789941036 -0.1961448396 -9.490401284e-016 -p -3.527873892 -1.419334091 -2.151461222e-015 -p -1.246356135 -3.289741011 -2.654056212e-015 -p -0.0001465761081 -3.337852213 -2.654056205e-015`;
+    $Nose_Control = `rename $Nose_Control "expressionCtrl_Nose"`;
+
+    string $Nose_Enlarge_preview = `curve -p 4.819382501e-009 -3.437671488 -2.654056204e-015 -p 1.305939268 -3.437671488 -2.654056204e-015 -p 3.917817803 -1.197674208 -2.079662001e-015 -p 5.540631079 0.373621081 -1.414530252e-016 -p 3.917817803 1.648674652 1.796755951e-015 -p 4.819382501e-009 3.437671488 2.654056204e-015 -p -3.917817794 1.648674652 1.796755951e-015 -p -5.540631079 0.373621081 -1.414530252e-016 -p -3.917817794 -1.197674208 -2.079662001e-015 -p -1.305939229 -3.437671488 -2.654056204e-015 -p 4.819382501e-009 -3.437671488 -2.654056204e-015`;
+    $Nose_Enlarge_preview = `rename $Nose_Enlarge_preview "expressionCtrl_Nose_Enlarge_preview"`;
+    setAttr ($Nose_Enlarge_preview+".template") 1;
+
+    string $Nose_Enlarge_SlideSlot = `curve -d 1 -p 0 2.75 0 -p 0 4.75 0`;
+    $Nose_Enlarge_SlideSlot = `rename $Nose_Enlarge_SlideSlot "expressionCtrl_Nose_Enlarge_SlideSlot"`;
+    setAttr ($Nose_Enlarge_SlideSlot+".template") 1;
+
+    string $tmpNose_Enlarge_Slider[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    string $Nose_Enlarge_Slider = `rename $tmpNose_Enlarge_Slider[0] "expressionCtrl_Nose_Enlarge_Slider"`;
+    string $Nose_Enlarge_Slider_Grp = `group -name "expressionCtrl_Nose_Enlarge_Slider_Grp" $Nose_Enlarge_Slider`;
+    setAttr ($Nose_Enlarge_Slider_Grp+".t") 0 2.75 0;
+
+    transformLimits -tx -2 2 -etx 1 1 -ty -3 3 -ety 1 1 $Nose_Control;
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control+".v");
+ 
+    setDrivenKeyframe -cd ($Nose_Control+".tx") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Move_L");
+    setDrivenKeyframe -cd ($Nose_Control+".tx") -dv 2 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Move_L");
+    setDrivenKeyframe -cd ($Nose_Control+".tx") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Move_R");
+    setDrivenKeyframe -cd ($Nose_Control+".tx") -dv -2 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Move_R");
+    setDrivenKeyframe -cd ($Nose_Control+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Up");
+    setDrivenKeyframe -cd ($Nose_Control+".ty") -dv 3 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Up");
+    setDrivenKeyframe -cd ($Nose_Control+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Down");
+    setDrivenKeyframe -cd ($Nose_Control+".ty") -dv -3 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Down");
+
+
+    transformLimits -ty 0 2 -ety 1 1 $Nose_Enlarge_Slider;
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Enlarge_Slider+".v");
+
+    setDrivenKeyframe -cd ($Nose_Enlarge_Slider+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Enlarge");
+    setDrivenKeyframe -cd ($Nose_Enlarge_Slider+".ty") -dv 2 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Enlarge");
+
+    string $exprecmd_Nose_Enlarge_Slider = "float $s = linstep(0, 2, " + $Nose_Enlarge_Slider + ".ty) * 0.67;\n" +
+        $Nose_Enlarge_preview+".scaleX = 1.0+$s;\n" +
+        $Nose_Enlarge_preview+".scaleY = 1.0+$s;\n" +
+        $Nose_Enlarge_preview+".scaleZ = 1.0+$s;\n";
+    
+    expression -s $exprecmd_Nose_Enlarge_Slider -n "expression_Nose_Enlarge_Slider";
+   
+    string $Nose_Control_Grp = `group -name "expressionCtrl_Nose_Control_Grp" $Nose_Control $Nose_Enlarge_preview $Nose_Enlarge_SlideSlot $Nose_Enlarge_Slider_Grp`;
+    parent $Nose_Enlarge_preview $Nose_Enlarge_SlideSlot $Nose_Enlarge_Slider_Grp $Nose_Control;
+    setAttr ($Nose_Control_Grp+".t") 0 -6 0;
+    parent $Nose_Control_Grp $headGrp_curve;
+
+
+
+    string $tmpNose_Control_R[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 1.5 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    string $Nose_Control_R = `rename $tmpNose_Control_R[0] "expressionCtrl_Nose_Control_R"`;
+    string $Nose_Control_R_Grp = `group -name "expressionCtrl_Nose_Control_R_Grp" $Nose_Control_R`;
+    setAttr ($Nose_Control_R_Grp+".t") -4 -7 0;
+    parent $Nose_Control_R_Grp $Nose_Control;
+
+    transformLimits -ty 0 3 -ety 1 1 $Nose_Control_R;
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_R+".v");
+
+    setDrivenKeyframe -cd ($Nose_Control_R+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Up_R");
+    setDrivenKeyframe -cd ($Nose_Control_R+".ty") -dv 3 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Up_R");
+
+
+
+    string $tmpNose_Control_L[] = `circle -c 0 0 0 -nr 0 0 1 -sw 360 -r 1.5 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+    string $Nose_Control_L = `rename $tmpNose_Control_L[0] "expressionCtrl_Nose_Control_L"`;
+    string $Nose_Control_L_Grp = `group -name "expressionCtrl_Nose_Control_L_Grp" $Nose_Control_L`;
+    setAttr ($Nose_Control_L_Grp+".t") 4 -7 0;
+    parent $Nose_Control_L_Grp $Nose_Control;
+
+    transformLimits -ty 0 3 -ety 1 1 $Nose_Control_L;
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".tx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".tz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".rx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".ry");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".rz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".sx");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".sy");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".sz");
+    setAttr -lock true -keyable false -channelBox false ($Nose_Control_L+".v");
+
+    setDrivenKeyframe -cd ($Nose_Control_L+".ty") -dv 0 -v 0 -itt linear -ott linear ($expressionBlendNode+".Nose_Up_L");
+    setDrivenKeyframe -cd ($Nose_Control_L+".ty") -dv 3 -v 1 -itt linear -ott linear ($expressionBlendNode+".Nose_Up_L");
+
+    select -cl  ;
+}
