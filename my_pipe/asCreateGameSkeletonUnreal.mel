@@ -1,0 +1,268 @@
+global proc asCreateGameSkeletonUnreal ()
+{
+if (!`asConfirmIfNotInBuildPose`)
+	return;
+
+if (`objExists |root`) delete |root;
+
+//make sure all names for Unreal joints are avaiable
+string $destJoints[]={"root","spine_01","spine_02","spine_03","neck_01","head"};
+string $sideDestJoints[];
+string $SIDE="_R";
+string $side="_r";
+for ($b=1;$b>-2;$b=$b-2)
+	{
+	if ($b==-1) {$SIDE="_L";$side="_l";}
+	$sideDestJoints={("clavicle"+$side),("upperarm"+$side),("upperarm_twist_01"+$side),("lowerarm"+$side),("lowerarm_twist_01"+$side),("hand"+$side),
+		("index_01"+$side),("index_02"+$side),("index_03"+$side),
+		("middle_01"+$side),("middle_02"+$side),("middle_03"+$side),
+		("ring_01"+$side),("ring_02"+$side),("ring_03"+$side),
+		("pinky_01"+$side),("pinky_02"+$side),("pinky_03"+$side),
+		("thumb_01"+$side),("thumb_02"+$side),("thumb_03"+$side),
+		("thigh"+$side),("thigh_twist_01"+$side),("calf"+$side),("calf_twist_01"+$side),("foot"+$side),("ball"+$side)};
+	}
+$destJoints=`stringArrayCatenate $destJoints $sideDestJoints`;
+for ($i=0;$i<size($destJoints);$i++)
+	if (`objExists $destJoints[$i]`)
+		{
+		select $destJoints[$i];
+		error ("A object with the name \""+$destJoints[$i]+"\" already exists, rename this to another name first.");
+		}
+
+string $unrealFile=`asGetScriptLocation`+"/AdvancedSkeleton5Files/div/asUnreal.ma";
+if (!`file -q -ex $unrealFile`)
+	error ("Not found:"+$unrealFile);
+file -i $unrealFile;
+
+if (`objExists Main`)
+	{
+	pointConstraint Main root;
+	orientConstraint Main root;
+	setAttr root_orientConstraint1.offsetX -90;
+	}
+if (`objExists Root_M`)
+	{
+	pointConstraint Root_M pelvis;
+	orientConstraint Root_M pelvis;
+	setAttr pelvis_orientConstraint1.offsetX 180;
+	}
+if (`objExists RootPart1_M`)
+	{
+	pointConstraint RootPart1_M spine_01;
+	orientConstraint RootPart1_M spine_01;
+	setAttr spine_01_orientConstraint1.offsetX 180;
+	}
+else if (`objExists Root_M` && `objExists Spine1_M` && `objExists Spine2_M`)
+	{
+	pointConstraint Spine1_M spine_01;
+	orientConstraint Spine1_M spine_01;
+	setAttr spine_01_orientConstraint1.offsetX 180;
+	delete spine_01_orientConstraint1 spine_01_pointConstraint1;
+	pointConstraint Spine1_M spine_01;
+	}
+else if (`objExists Root_M` && `objExists Spine1_M`)
+	{
+	pointConstraint Spine1_M spine_01;
+	orientConstraint Spine1_M spine_01;
+	setAttr spine_01_orientConstraint1.offsetX 180;
+	delete spine_01_orientConstraint1 spine_01_pointConstraint1;
+	pointConstraint Root_M Spine1_M spine_01;
+	}
+if (`objExists Spine2_M`)
+	{
+	pointConstraint Spine2_M spine_02;
+	orientConstraint Spine2_M spine_02;
+	setAttr spine_02_orientConstraint1.offsetX 180;
+	}
+else if (`objExists Spine1_M`)
+	{
+	pointConstraint Spine1_M spine_02;
+	orientConstraint Spine1_M spine_02;
+	setAttr spine_02_orientConstraint1.offsetX 180;
+	}
+if (`objExists Chest_M`)
+	{
+	pointConstraint Chest_M spine_03;
+	orientConstraint Chest_M spine_03;
+	setAttr spine_03_orientConstraint1.offsetX 180;
+	}
+$SIDE="_R";
+$side="_r";
+for ($b=1;$b>-2;$b=$b-2)
+	{
+	if ($b==-1) {$SIDE="_L";$side="_l";}
+	if (`objExists ("Scapula"+$SIDE)`)
+		{
+		pointConstraint ("Scapula"+$SIDE) ("clavicle"+$side);
+		orientConstraint ("Scapula"+$SIDE) ("clavicle"+$side);
+		setAttr -type float3 ("clavicle"+$side+"_orientConstraint1.offset") 180 0 180;
+		}
+	if (`objExists ("Shoulder"+$SIDE)`)
+		{
+		pointConstraint ("Shoulder"+$SIDE) ("upperarm"+$side);
+		orientConstraint ("Shoulder"+$SIDE) ("upperarm"+$side);
+		setAttr -type float3 ("upperarm"+$side+"_orientConstraint1.offset") 180 0 180;
+		}
+	if (`objExists ("Elbow"+$SIDE)`)
+		{
+		pointConstraint ("Elbow"+$SIDE) ("lowerarm"+$side);
+		orientConstraint ("Elbow"+$SIDE) ("lowerarm"+$side);
+		setAttr -type float3 ("lowerarm"+$side+"_orientConstraint1.offset") 180 0 180;
+		}
+	if (`objExists ("ShoulderPart1"+$SIDE)`)
+		{
+		pointConstraint ("ShoulderPart1"+$SIDE) ("upperarm_twist_01"+$side);
+		orientConstraint ("ShoulderPart1"+$SIDE) ("upperarm_twist_01"+$side);
+		setAttr -type float3 ("upperarm_twist_01"+$side+"_orientConstraint1.offset") 180 0 180;
+		}
+	if (`objExists ("ElbowPart1"+$SIDE)`)
+		{
+		pointConstraint ("ElbowPart1"+$SIDE) ("lowerarm_twist_01"+$side);
+		orientConstraint ("ElbowPart1"+$SIDE) ("lowerarm_twist_01"+$side);
+		setAttr -type float3 ("lowerarm_twist_01"+$side+"_orientConstraint1.offset") 180 0 180;
+		}
+	if (`objExists ("Wrist"+$SIDE)`)
+		{
+		pointConstraint ("Wrist"+$SIDE) ("hand"+$side);
+		orientConstraint ("Wrist"+$SIDE) ("hand"+$side);
+		setAttr -type float3 ("hand"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("PinkyFinger1"+$SIDE)`)
+		{
+		pointConstraint ("PinkyFinger1"+$SIDE) ("pinky_01"+$side);
+		orientConstraint ("PinkyFinger1"+$SIDE) ("pinky_01"+$side);
+		setAttr -type float3 ("pinky_01"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("PinkyFinger2"+$SIDE)`)
+		{
+		pointConstraint ("PinkyFinger2"+$SIDE) ("pinky_02"+$side);
+		orientConstraint ("PinkyFinger2"+$SIDE) ("pinky_02"+$side);
+		setAttr -type float3 ("pinky_02"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("PinkyFinger3"+$SIDE)`)
+		{
+		pointConstraint ("PinkyFinger3"+$SIDE) ("pinky_03"+$side);
+		orientConstraint ("PinkyFinger3"+$SIDE) ("pinky_03"+$side);
+		setAttr -type float3 ("pinky_03"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("RingFinger1"+$SIDE)`)
+		{
+		pointConstraint ("RingFinger1"+$SIDE) ("ring_01"+$side);
+		orientConstraint ("RingFinger1"+$SIDE) ("ring_01"+$side);
+		setAttr -type float3 ("ring_01"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("RingFinger2"+$SIDE)`)
+		{
+		pointConstraint ("RingFinger2"+$SIDE) ("ring_02"+$side);
+		orientConstraint ("RingFinger2"+$SIDE) ("ring_02"+$side);
+		setAttr -type float3 ("ring_02"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("RingFinger3"+$SIDE)`)
+		{
+		pointConstraint ("RingFinger3"+$SIDE) ("ring_03"+$side);
+		orientConstraint ("RingFinger3"+$SIDE) ("ring_03"+$side);
+		setAttr -type float3 ("ring_03"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("MiddleFinger1"+$SIDE)`)
+		{
+		pointConstraint ("MiddleFinger1"+$SIDE) ("middle_01"+$side);
+		orientConstraint ("MiddleFinger1"+$SIDE) ("middle_01"+$side);
+		setAttr -type float3 ("middle_01"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("MiddleFinger2"+$SIDE)`)
+		{
+		pointConstraint ("MiddleFinger2"+$SIDE) ("middle_02"+$side);
+		orientConstraint ("MiddleFinger2"+$SIDE) ("middle_02"+$side);
+		setAttr -type float3 ("middle_02"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("MiddleFinger3"+$SIDE)`)
+		{
+		pointConstraint ("MiddleFinger3"+$SIDE) ("middle_03"+$side);
+		orientConstraint ("MiddleFinger3"+$SIDE) ("middle_03"+$side);
+		setAttr -type float3 ("middle_03"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("IndexFinger1"+$SIDE)`)
+		{
+		pointConstraint ("IndexFinger1"+$SIDE) ("index_01"+$side);
+		orientConstraint ("IndexFinger1"+$SIDE) ("index_01"+$side);
+		setAttr -type float3 ("index_01"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("IndexFinger2"+$SIDE)`)
+		{
+		pointConstraint ("IndexFinger2"+$SIDE) ("index_02"+$side);
+		orientConstraint ("IndexFinger2"+$SIDE) ("index_02"+$side);
+		setAttr -type float3 ("index_02"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("IndexFinger3"+$SIDE)`)
+		{
+		pointConstraint ("IndexFinger3"+$SIDE) ("index_03"+$side);
+		orientConstraint ("IndexFinger3"+$SIDE) ("index_03"+$side);
+		setAttr -type float3 ("index_03"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("ThumbFinger1"+$SIDE)`)
+		{
+		pointConstraint ("ThumbFinger1"+$SIDE) ("thumb_01"+$side);
+		orientConstraint ("ThumbFinger1"+$SIDE) ("thumb_01"+$side);
+		setAttr -type float3 ("thumb_01"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("ThumbFinger2"+$SIDE)`)
+		{
+		pointConstraint ("ThumbFinger2"+$SIDE) ("thumb_02"+$side);
+		orientConstraint ("ThumbFinger2"+$SIDE) ("thumb_02"+$side);
+		setAttr -type float3 ("thumb_02"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+	if (`objExists ("ThumbFinger3"+$SIDE)`)
+		{
+		pointConstraint ("ThumbFinger3"+$SIDE) ("thumb_03"+$side);
+		orientConstraint ("ThumbFinger3"+$SIDE) ("thumb_03"+$side);
+		setAttr -type float3 ("thumb_03"+$side+"_orientConstraint1.offset") 90 0 180;
+		}
+
+	if (`objExists ("Hip"+$SIDE)`)
+		{
+		pointConstraint ("Hip"+$SIDE) ("thigh"+$side);
+		orientConstraint ("Hip"+$SIDE) ("thigh"+$side);
+		}
+	if (`objExists ("HipPart1"+$SIDE)`)
+		{
+		pointConstraint ("HipPart1"+$SIDE) ("thigh_twist_01"+$side);
+		orientConstraint ("HipPart1"+$SIDE) ("thigh_twist_01"+$side);
+		}
+	if (`objExists ("Knee"+$SIDE)`)
+		{
+		pointConstraint ("Knee"+$SIDE) ("calf"+$side);
+		orientConstraint ("Knee"+$SIDE) ("calf"+$side);
+		}
+	if (`objExists ("Knee"+$SIDE)` && `objExists ("Ankle"+$SIDE)`)
+		{
+		pointConstraint ("Knee"+$SIDE) ("Ankle"+$SIDE) ("calf_twist_01"+$side);
+		orientConstraint ("Knee"+$SIDE) ("calf_twist_01"+$side);
+		}
+	if (`objExists ("Ankle"+$SIDE)`)
+		{
+		pointConstraint ("Ankle"+$SIDE) ("foot"+$side);
+		orientConstraint ("Ankle"+$SIDE) ("foot"+$side);
+		}
+	if (`objExists ("Toes"+$SIDE)`)
+		{
+		pointConstraint ("Toes"+$SIDE) ("ball"+$side);
+		orientConstraint ("Toes"+$SIDE) ("ball"+$side);
+		setAttr ("ball"+$side+"_orientConstraint1.offsetZ") 180;
+		}
+	}
+if (`objExists Neck_M`)
+	{
+	pointConstraint Neck_M neck_01;
+	orientConstraint Neck_M neck_01;
+	setAttr neck_01_orientConstraint1.offsetX 180;
+	}
+if (`objExists Head_M`)
+	{
+	pointConstraint Head_M head;
+	orientConstraint Head_M head;
+	setAttr head_orientConstraint1.offsetX 180;
+	}
+
+select -cl;
+print ("// GameSkeleton created\n");
+}

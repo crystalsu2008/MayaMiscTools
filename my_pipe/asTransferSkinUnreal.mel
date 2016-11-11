@@ -1,0 +1,66 @@
+global proc asTransferSkinUnreal ()
+{
+if (!`asConfirmIfNotInBuildPose`)
+	return;
+
+string $scs[]=`ls -type skinCluster`;
+string $deformJointsList[]=`sets -q "DeformSet"`;
+string $sourceJoints[]={"Root_M","Spine1_M","RootPart1_M","Chest_M","Neck_M","Head_M"};
+if (`objExists Spine2_M`)
+    $sourceJoints[2] = "Spine2_M";
+string $destJoints[]={"pelvis","spine_01","spine_02","spine_03","neck_01","head"};
+string $scps[],$sideSourceJoints[],$sideDestJoints[];
+string $SIDE="_R";
+string $side="_r";
+for ($b=1;$b>-2;$b=$b-2)
+	{
+	if ($b==-1) {$SIDE="_L";$side="_l";}
+	$sideSourceJoints={("Scapula"+$SIDE),("Shoulder"+$SIDE),("ShoulderPart1"+$SIDE),("Elbow"+$SIDE),("ElbowPart1"+$SIDE),("Wrist"+$SIDE),
+//		("Cup"+$SIDE),
+		("IndexFinger1"+$SIDE),("IndexFinger2"+$SIDE),("IndexFinger3"+$SIDE),
+		("MiddleFinger1"+$SIDE),("MiddleFinger2"+$SIDE),("MiddleFinger3"+$SIDE),
+		("RingFinger1"+$SIDE),("RingFinger2"+$SIDE),("RingFinger3"+$SIDE),
+		("PinkyFinger1"+$SIDE),("PinkyFinger2"+$SIDE),("PinkyFinger3"+$SIDE),
+		("ThumbFinger1"+$SIDE),("ThumbFinger2"+$SIDE),("ThumbFinger3"+$SIDE),
+		("Hip"+$SIDE),("HipPart1"+$SIDE),("Knee"+$SIDE),("Knee"+$SIDE),("Ankle"+$SIDE),("Toes"+$SIDE)};
+	$sideDestJoints={("clavicle"+$side),("upperarm"+$side),("upperarm_twist_01"+$side),("lowerarm"+$side),("lowerarm_twist_01"+$side),("hand"+$side),
+//		("hand"+$side),
+		("index_01"+$side),("index_02"+$side),("index_03"+$side),
+		("middle_01"+$side),("middle_02"+$side),("middle_03"+$side),
+		("ring_01"+$side),("ring_02"+$side),("ring_03"+$side),
+		("pinky_01"+$side),("pinky_02"+$side),("pinky_03"+$side),
+		("thumb_01"+$side),("thumb_02"+$side),("thumb_03"+$side),
+		("thigh"+$side),("thigh_twist_01"+$side),("calf"+$side),("calf_twist_01"+$side),("foot"+$side),("ball"+$side)};
+	$sourceJoints=`stringArrayCatenate $sourceJoints $sideSourceJoints`;
+	$destJoints=`stringArrayCatenate $destJoints $sideDestJoints`;
+	}
+
+//transfer $sourceJoints to $destJoints
+for ($i=0;$i<size($sourceJoints);$i++)
+	{
+	if (!`objExists $sourceJoints[$i]` || !`objExists $destJoints[$i]`)
+		continue;
+	$scps=`listConnections -p 1 ($sourceJoints[$i]+".worldMatrix[0]")`;
+	for ($y=0;$y<size($scps);$y++)
+		connectAttr -f ($destJoints[$i]+".worldMatrix[0]") $scps[$y];
+	}
+
+//any joints `under` head, to be assigned to head
+string $tempString[]=`listRelatives -ad -type joint Head_M`;
+for ($i=0;$i<size($tempString);$i++)
+	{
+	$scps=`listConnections -p 1 ($tempString[$i]+".worldMatrix[0]")`;
+	for ($y=0;$y<size($scps);$y++)
+		connectAttr -f head.worldMatrix[0] $scps[$y];
+	}
+
+for ($i=0;$i<size($scs);$i++)
+	{
+	for ($y=0;$y<size($deformJointsList);$y++)
+		asRemoveInfluence $deformJointsList[$y] $scs[$i];
+	}
+for ($i=0;$i<size($scs);$i++)
+	freezeSkinCluster $scs[$i];
+dgdirty -a;
+print ("// Skinning transferred to Unreal Skeleton\n");
+}
